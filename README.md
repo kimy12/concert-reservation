@@ -94,6 +94,11 @@ api
 │  └─ presentation  
 │     ├─ controller
 │     └─ dto
+
+# 지금은 db만을 사용하지만, 추후에 redis 등을 적용 할 것이라고 생각해서 이번엔 infrastructure를 따로 분리했다.
+저번 주차 까지는 domain 레벨에서 jpa repository, entity를 그대로 사용해 jpa기술을 활용하도록 노력했고, 이번주차부터는 db와 redis를 분리할 것을 생각하며,
+패키지 설계를 했고, infrastructure entity, domain entity를 따로 분리해 사용 할 예정이다.
+ 
 ```
 
 
