@@ -20,7 +20,7 @@
 </details>
 
 <details>
-<summary>유저 토큰 발급</summary>
+<summary>유저 토큰 발급 및 대기열 입장</summary>
 <div markdown="1">
 
 ![sequence_2.png](docs/images/sequence_2.png)
