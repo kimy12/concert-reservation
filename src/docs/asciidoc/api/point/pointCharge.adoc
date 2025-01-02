@@ -1,0 +1,10 @@
+[[point-charge]]
+=== 포인트 충전
+
+==== HTTP Request
+include::{snippets}/point-charge/http-request.adoc[]
+include::{snippets}/point-charge/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/point-charge/http-response.adoc[]
+include::{snippets}/point-charge/response-fields.adoc[]
