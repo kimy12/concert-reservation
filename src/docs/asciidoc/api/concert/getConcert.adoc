@@ -1,0 +1,9 @@
+[[concert-get]]
+=== 콘서트 조회
+==== HTTP Request
+include::{snippets}/concert-get/http-request.adoc[]
+include::{snippets}/concert-get/query-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/concert-get/http-response.adoc[]
+include::{snippets}/concert-get/response-fields.adoc[]

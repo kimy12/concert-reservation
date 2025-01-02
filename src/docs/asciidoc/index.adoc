@@ -1,0 +1,26 @@
+ifndef::snippets[]
+:snippets: ../../build/generated-snippets
+endif::[]
+= Concert Reservation REST API 문서
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+
+[[Token-API]]
+== Token API
+
+include::api/token/token.adoc[]
+
+== Point API
+
+include::api/point/point.adoc[]
+include::api/point/pointCharge.adoc[]
+
+== Concert API
+include::api/concert/getConcert.adoc[]
+include::api/concert/getDates.adoc[]
+include::api/concert/getSeats.adoc[]
+include::api/concert/reserveSeat.adoc[]
