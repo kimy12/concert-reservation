@@ -1,0 +1,9 @@
+[[seat-reserve]]
+=== 콘서트 좌석 예약
+==== HTTP Request
+include::{snippets}/seat-reserve/http-request.adoc[]
+include::{snippets}/seat-reserve/request-body.adoc[]
+
+==== HTTP Response
+include::{snippets}/seat-reserve/http-response.adoc[]
+include::{snippets}/seat-reserve/response-fields.adoc[]

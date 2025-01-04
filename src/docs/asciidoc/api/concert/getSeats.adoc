@@ -1,0 +1,9 @@
+[[availableSeats-get]]
+=== 예약 가능 좌석 조회
+==== HTTP Request
+include::{snippets}/availableSeats-get/http-request.adoc[]
+include::{snippets}/availableSeats-get/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/availableSeats-get/http-response.adoc[]
+include::{snippets}/availableSeats-get/response-fields.adoc[]

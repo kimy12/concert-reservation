@@ -1,0 +1,10 @@
+[[point-get]]
+=== 포인트 조회
+
+==== HTTP Request
+include::{snippets}/point-get/http-request.adoc[]
+include::{snippets}/point-get/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/point-get/http-response.adoc[]
+include::{snippets}/point-get/response-fields.adoc[]

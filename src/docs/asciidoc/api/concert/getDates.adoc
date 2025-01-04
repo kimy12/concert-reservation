@@ -1,0 +1,9 @@
+[[availableDates-get]]
+=== 예약 가능 날짜 조회
+==== HTTP Request
+include::{snippets}/availableDates-get/http-request.adoc[]
+include::{snippets}/availableDates-get/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/availableDates-get/http-response.adoc[]
+include::{snippets}/availableDates-get/response-fields.adoc[]
