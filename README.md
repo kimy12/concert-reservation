@@ -29,10 +29,19 @@
 </details>
 
 <details>
-<summary>예약 가능한 날짜 및 좌석</summary>
+<summary>예약 가능한 날짜 조회</summary>
 <div markdown="1">
 
-![sequence_3.png](docs/images/sequence_3.png)
+![sequence_3.1.png](docs/images/sequence_3.1.png)
+
+</div>
+</details>
+
+<details>
+<summary>예약 가능한 좌석 조회</summary>
+<div markdown="1">
+
+![sequence_3.2.png](docs/images/sequence_3.2.png)
 
 </div>
 </details>
@@ -47,10 +56,19 @@
 </details>
 
 <details>
-<summary>잔액 충전 및 조회</summary>
+<summary>잔액 조회</summary>
 <div markdown="1">
 
-![sequence_5.png](docs/images/sequence_5.png)
+![sequence_5.1.png](docs/images/sequence_5.1.png)
+
+</div>
+</details>
+
+<details>
+<summary>포인트 충전</summary>
+<div markdown="1">
+
+![sequence_5.2.png](docs/images/sequence_5.2.png)
 
 </div>
 </details>
