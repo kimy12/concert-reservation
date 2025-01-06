@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.api.docs;
 
 import kr.hhplus.be.server.RestDocsSupport;
+import kr.hhplus.be.server.api.point.application.UserPointFacade;
 import kr.hhplus.be.server.api.point.presentation.controller.PointController;
 import kr.hhplus.be.server.api.point.presentation.dto.PointRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -8,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 
+import static kr.hhplus.be.server.api.point.domain.enums.PointHistoryType.CHARGE;
+import static org.mockito.Mockito.mock;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
@@ -22,9 +25,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class PointControllerDocsTest extends RestDocsSupport {
+
+    private final UserPointFacade userPointFacade = mock(UserPointFacade.class);
+
     @Override
     protected Object initController() {
-        return new PointController();
+        return new PointController(userPointFacade);
     }
 
     @DisplayName("포인트를 조회하는 API")
@@ -68,7 +74,7 @@ public class PointControllerDocsTest extends RestDocsSupport {
     void chargePoint() throws Exception {
         mockMvc.perform(
                         patch("/point/api/v1/chargePoint")
-                                .content(objectMapper.writeValueAsString(new PointRequest.ChargePoint(1L, 100000)))
+                                .content(objectMapper.writeValueAsString(new PointRequest.ChargePoint(1L, 100000, CHARGE)))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON)
                 )
