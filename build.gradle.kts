@@ -21,8 +21,20 @@ java {
 	}
 }
 
+val querydslDir = "$buildDir/generated/querydsl"
+
+tasks.named<Test>("test") {
+	useJUnitPlatform()
+}
 
 
+tasks.register<Delete>("cleanQuerydsl") {
+	delete(file(querydslDir))
+}
+
+tasks.withType<JavaCompile> {
+	options.generatedSourceOutputDirectory.set(file(querydslDir))
+}
 repositories {
 	mavenCentral()
 }
@@ -39,7 +51,14 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	// spring doc
-	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
+	// AOP
+	implementation("org.springframework.boot:spring-boot-starter-aop")
+	//QueryDSL
+	implementation("com.querydsl:querydsl-jpa:5.0.0:jakarta")
+	annotationProcessor("com.querydsl:querydsl-apt:5.0.0:jakarta")
+	annotationProcessor("jakarta.annotation:jakarta.annotation-api")
+	annotationProcessor("jakarta.persistence:jakarta.persistence-api")
 
 	// DB
 	runtimeOnly("com.mysql:mysql-connector-j")
@@ -54,9 +73,9 @@ dependencies {
 	testImplementation("org.testcontainers:junit-jupiter")
 	testImplementation("org.testcontainers:mysql")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-	// RestDoc
-	asciidoctorExt("org.springframework.restdocs:spring-restdocs-asciidoctor")
-	testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
+	// spring doc
+//	asciidoctorExt("org.springframework.restdocs:spring-restdocs-asciidoctor")
+//	testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
 }
 
 
