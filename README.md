@@ -119,6 +119,85 @@ api
  
 ```
 
+## Swagger
 
+<details>
+<summary>api</summary>
+<div markdown="1">
 
+![swagger1.png](docs/images/swagger/swagger1.png)
 
+</div>
+</details>
+
+<details>
+<summary>콘서트 검색</summary>
+<div markdown="1">
+
+![swagger2 .png](docs/images/swagger/swagger2%20.png)
+
+</div>
+</details>
+
+<details>
+<summary>예약 가능한 날짜 조회</summary>
+<div markdown="1">
+
+![swagger3.png](docs/images/swagger/swagger3.png)
+
+</div>
+</details>
+
+<details>
+<summary>예약 가능한 좌석 조회</summary>
+<div markdown="1">
+
+![swagger4.png](docs/images/swagger/swagger4.png)
+
+</div>
+</details>
+
+<details>
+<summary>콘서트 자리 예약</summary>
+<div markdown="1">
+
+![swagger5.png](docs/images/swagger/swagger5.png)
+
+</div>
+</details>
+
+<details>
+<summary>예약 좌석 결제</summary>
+<div markdown="1">
+
+![swagger6.png](docs/images/swagger/swagger6.png)
+
+</div>
+</details>
+
+<details>
+<summary>사용자 토큰 조회</summary>
+<div markdown="1">
+
+![swagger7.png](docs/images/swagger/swagger7.png)
+
+</div>
+</details>
+
+<details>
+<summary>사용자 포인트 조회</summary>
+<div markdown="1">
+
+![swagger8.png](docs/images/swagger/swagger8.png)
+
+</div>
+</details>
+
+<details>
+<summary>사용자 포인트 충전 및 조회</summary>
+<div markdown="1">
+
+![swagger9.png](docs/images/swagger/swagger9.png)
+
+</div>
+</details>

@@ -1,15 +1,20 @@
 package kr.hhplus.be.server.api.concert.presentation.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.hhplus.be.server.api.concert.application.ConcertFacade;
 import kr.hhplus.be.server.api.concert.presentation.dto.ConcertRequest;
+import kr.hhplus.be.server.api.concert.presentation.dto.ConcertResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -21,6 +26,9 @@ class ConcertControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @MockitoBean
+    private ConcertFacade concertFacade;
+
     @Autowired
     protected ObjectMapper objectMapper;
 
@@ -28,18 +36,19 @@ class ConcertControllerTest {
     @Test
     void getConcertByName() throws Exception {
         // given
-        String title = "콘서트";
+        long concertId = 1L;
 
         // when // then
         mockMvc.perform(get("/concerts/api/v1")
-                        .param("title", title)
+                        .param("concertId", String.valueOf(concertId))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.data.concertId").value(1))
                 .andExpect(jsonPath("$.data.title").value("콘서트"))
-                .andExpect(jsonPath("$.data.startAt").value("2024-05-05T14:00:00"))
+                .andExpect(jsonPath("$.data.concertSchedule[0]").value("2024-05-05T14:00:00"))
+                .andExpect(jsonPath("$.data.concertSchedule[1]").value("2024-05-05T13:00:00"))
                 ;
 
     }
@@ -47,37 +56,78 @@ class ConcertControllerTest {
     @DisplayName("예약 가능한 날짜를 가져온다.")
     @Test
     void availableDates() throws Exception{
+        //given
         long concertId = 1L;
-        // when // then
+
+        ConcertResponse.AvailableDates date1 = ConcertResponse.AvailableDates.builder()
+                .scheduleId(1)
+                .availableDate(LocalDateTime.of(2024, 5, 5, 14, 13))
+                .build();
+
+        ConcertResponse.AvailableDates date2 = ConcertResponse.AvailableDates.builder()
+                .scheduleId(2)
+                .availableDate(LocalDateTime.of(2024, 5, 6, 14, 13))
+                .build();
+
+        List<ConcertResponse.AvailableDates> availableDates = List.of(date1, date2);
+
+
+        Mockito.when(concertFacade.getAvailableDates(concertId)).thenReturn(availableDates);
+
+        // when //then
         mockMvc.perform(
                         get("/concerts/api/v1/{concertId}/availableDates", concertId)
                                 .accept(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.concertId").value("1"))
-                .andExpect(jsonPath("$.data.availableDates[0]").value("2024-05-05T14:00:00"))
-                .andExpect(jsonPath("$.data.availableDates[1]").value("2024-05-06T14:00:00"));
+                .andExpect(jsonPath("$.data[0].scheduleId").value("1"))
+                .andExpect(jsonPath("$.data[1].scheduleId").value("2"))
+                .andExpect(jsonPath("$.data[0].availableDate").value("2024-05-05T14:13:00"))
+                .andExpect(jsonPath("$.data[1].availableDate").value("2024-05-06T14:13:00"));
     }
 
     @DisplayName("예약 가능한 좌석을 가져온다.")
     @Test
     void availableSeats() throws Exception{
+        // given
         long concertId = 1L;
-        LocalDateTime date = LocalDateTime.now();
+        LocalDateTime date = LocalDateTime.of(2024, 5, 5, 14, 13);
+
+        ConcertResponse.SeatInfo seat1 = ConcertResponse.SeatInfo.builder()
+                .seatId(1)
+                .scheduleId(1)
+                .seatNumber(1)
+                .price(5000L)
+                .build();
+
+        ConcertResponse.SeatInfo seat2 = ConcertResponse.SeatInfo.builder()
+                .seatId(2)
+                .scheduleId(1)
+                .seatNumber(2)
+                .price(6000L)
+                .build();
+
+        List<ConcertResponse.SeatInfo> availableSeats = List.of(seat1, seat2);
+
+        Mockito.when(concertFacade.getAvailableSeats(concertId)).thenReturn(availableSeats);
+
         // when // then
         mockMvc.perform(
-                        get("/concerts/api/v1/{concertId}/availableSeats/{date}", concertId, date)
+                        get("/concerts/api/v1/{concertId}/availableSeats", concertId)
                                 .accept(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.concertId").value("1"))
-                .andExpect(jsonPath("$.data.seatNumber[0]").value("1"))
-                .andExpect(jsonPath("$.data.seatNumber[1]").value("2"))
-                .andExpect(jsonPath("$.data.seatNumber[2]").value("3"))
-                .andExpect(jsonPath("$.data.seatNumber[3]").value("20"))
-                .andExpect(jsonPath("$.data.price").value("5000"));
+                .andExpect(jsonPath("$.data[0].seatId").value("1"))
+                .andExpect(jsonPath("$.data[0].scheduleId").value("1"))
+                .andExpect(jsonPath("$.data[0].seatNumber").value("1"))
+                .andExpect(jsonPath("$.data[0].price").value("5000"))
+                .andExpect(jsonPath("$.data[1].seatId").value("2"))
+                .andExpect(jsonPath("$.data[1].scheduleId").value("1"))
+                .andExpect(jsonPath("$.data[1].seatNumber").value("2"))
+                .andExpect(jsonPath("$.data[1].price").value("6000"));
+
     }
 
     @DisplayName("콘서트 자리를 예약한다.")

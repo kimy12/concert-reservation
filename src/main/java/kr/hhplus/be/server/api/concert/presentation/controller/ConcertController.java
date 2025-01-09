@@ -1,55 +1,66 @@
 package kr.hhplus.be.server.api.concert.presentation.controller;
 
-import kr.hhplus.be.server.api.common.response.ApiResponse;
+import kr.hhplus.be.server.api.common.response.RestResponse;
+import kr.hhplus.be.server.api.concert.application.ConcertFacade;
 import kr.hhplus.be.server.api.concert.presentation.dto.ConcertRequest;
 import kr.hhplus.be.server.api.concert.presentation.dto.ConcertResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/concerts")
-public class ConcertController {
+public class ConcertController implements SwaggerApi{
+
+    private final ConcertFacade concertFacade;
 
     /**
      * 콘서트 검색
      *
      */
+    @Override
     @GetMapping("/api/v1")
-    ApiResponse<ConcertResponse.ConcertInfo> concertList(@RequestParam(name = "title") String title) {
-
-        return ApiResponse.ok(new ConcertResponse.ConcertInfo(1, "콘서트", LocalDateTime.of(2024, 5, 5, 14, 0)));
+    public RestResponse<List<ConcertResponse.ConcertInfo>> concertInfo(@RequestParam(name = "concertId") long concertId) {
+        return RestResponse.ok(concertFacade.getConcertInfo(concertId));
     }
 
     /**
      * 예약 가능한 날짜를 가져온다.
      */
+    @Override
     @GetMapping("/api/v1/{concertId}/availableDates")
-    ApiResponse<ConcertResponse.AvailableDates> availableDates(@PathVariable(name = "concertId") long concertId) {
-
-        return ApiResponse.ok(new ConcertResponse.AvailableDates(1, List.of(LocalDateTime.of(2024, 5, 5, 14, 0), LocalDateTime.of(2024, 5, 6, 14, 0))));
+    public RestResponse<List<ConcertResponse.AvailableDates>> availableDates(@PathVariable(name = "concertId") long concertId) {
+        return RestResponse.ok(concertFacade.getAvailableDates(concertId));
     }
 
     /**
      * 예약 가능한 좌석을 가져온다.
      */
-    @GetMapping("/api/v1/{concertId}/availableSeats/{date}")
-    ApiResponse<ConcertResponse.SeatInfo> availableSeats(@PathVariable(name = "concertId") long concertId,
-                                                         @PathVariable(name = "date") LocalDateTime date) {
-
-        return ApiResponse.ok(new ConcertResponse.SeatInfo(1, List.of(1,2,3,20), 5000));
+    @Override
+    @GetMapping("/api/v1/{scheduleId}/availableSeats")
+    public RestResponse<List<ConcertResponse.SeatInfo>> availableSeats(@PathVariable(name = "scheduleId") long scheduleId) {
+        return RestResponse.ok(concertFacade.getAvailableSeats(scheduleId));
     }
 
     /**
      * 콘서트 자리를 예약한다.
      *
      */
+    @Override
     @PostMapping("/api/v1/reserveSeat")
-    ApiResponse<ConcertResponse.ReservedSeatInfo> reserveConcertSeat (@RequestBody ConcertRequest.ReserveConcert request) {
+    public RestResponse<ConcertResponse.ReservedSeatInfo> reserveConcertSeat (@RequestBody ConcertRequest.ReserveConcert request) {
+        return RestResponse.ok(concertFacade.reservedSeat(request));
+    }
 
-        return ApiResponse.ok(new ConcertResponse.ReservedSeatInfo(1, 3, 5000));
+    /**
+     *
+     * 예약 좌석을 결제한다.
+     */
+    @Override
+    @PatchMapping("/api/v1/paySeat")
+    public RestResponse<ConcertResponse.ReservedSeatInfo> payConcertSeat (@RequestBody ConcertRequest.ReserveConcert request){
+        return RestResponse.ok(concertFacade.payReservedSeat(request));
     }
 }
