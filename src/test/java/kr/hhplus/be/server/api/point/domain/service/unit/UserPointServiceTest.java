@@ -1,8 +1,8 @@
 package kr.hhplus.be.server.api.point.domain.service.unit;
 
 import kr.hhplus.be.server.api.common.exception.CustomException;
-import kr.hhplus.be.server.api.point.domain.entity.PointHistory;
-import kr.hhplus.be.server.api.point.domain.entity.UserPoint;
+import kr.hhplus.be.server.api.point.domain.dto.PointHistory;
+import kr.hhplus.be.server.api.point.domain.dto.UserPoint;
 import kr.hhplus.be.server.api.point.domain.repository.UserPointRepository;
 import kr.hhplus.be.server.api.point.domain.service.UserPointService;
 import org.junit.jupiter.api.DisplayName;

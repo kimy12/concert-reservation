@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.api.point.domain.entity;
+package kr.hhplus.be.server.api.point.domain.dto;
 
 import kr.hhplus.be.server.api.common.exception.CustomException;
 import org.junit.jupiter.api.DisplayName;

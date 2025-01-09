@@ -2,7 +2,7 @@ package kr.hhplus.be.server.api.point.domain.service;
 
 import kr.hhplus.be.server.api.common.exception.CustomException;
 import kr.hhplus.be.server.api.common.exception.enums.ErrorCode;
-import kr.hhplus.be.server.api.point.domain.entity.User;
+import kr.hhplus.be.server.api.point.domain.dto.User;
 import kr.hhplus.be.server.api.point.domain.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
