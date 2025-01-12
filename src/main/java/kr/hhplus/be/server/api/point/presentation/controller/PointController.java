@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.api.point.presentation.controller;
 
-import kr.hhplus.be.server.api.common.response.ApiResponse;
+import kr.hhplus.be.server.api.common.response.RestResponse;
+import kr.hhplus.be.server.api.point.application.UserPointFacade;
 import kr.hhplus.be.server.api.point.presentation.dto.PointRequest;
 import kr.hhplus.be.server.api.point.presentation.dto.PointResponse;
 import lombok.RequiredArgsConstructor;
@@ -10,21 +11,19 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/point")
-public class PointController {
+public class PointController implements SwaggerApi{
 
+    private final UserPointFacade userPointFacade;
+
+    @Override
     @GetMapping("/api/v1/{userId}/totalPoint")
-    ApiResponse<PointResponse.TotalPoint> getTotalPoint(@PathVariable(name = "userId") long userId) {
-        return ApiResponse.of(HttpStatus.OK, PointResponse.TotalPoint.builder()
-                .userId(1)
-                .totalPoint(100000)
-                .build());
+    public RestResponse<PointResponse.TotalPoint> getTotalPoint(@PathVariable(name = "userId") long userId) {
+        return RestResponse.of(HttpStatus.OK, userPointFacade.getUserPoint(userId));
     }
 
+    @Override
     @PatchMapping("/api/v1/chargePoint")
-    ApiResponse<PointResponse.TotalPoint> chargePoint(@RequestBody PointRequest.ChargePoint pointRequest) {
-        return ApiResponse.ok(PointResponse.TotalPoint.builder()
-                .userId(pointRequest.userId())
-                .totalPoint(200000)
-                .build());
+    public RestResponse<PointResponse.TotalPoint> chargePoint(@RequestBody PointRequest.ChargePoint pointRequest) {
+        return RestResponse.ok(userPointFacade.chargePoint(pointRequest));
     }
 }
