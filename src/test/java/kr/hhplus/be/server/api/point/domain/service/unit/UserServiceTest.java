@@ -1,9 +1,9 @@
 package kr.hhplus.be.server.api.point.domain.service.unit;
 
 import kr.hhplus.be.server.api.common.exception.CustomException;
-import kr.hhplus.be.server.api.point.domain.dto.User;
-import kr.hhplus.be.server.api.point.domain.repository.UserRepository;
-import kr.hhplus.be.server.api.point.domain.service.UserService;
+import kr.hhplus.be.server.api.user.domain.dto.User;
+import kr.hhplus.be.server.api.user.domain.repository.UserRepository;
+import kr.hhplus.be.server.api.user.domain.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
