@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.api.point.domain.dto;
+package kr.hhplus.be.server.api.user.domain.dto;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
