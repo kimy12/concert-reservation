@@ -4,7 +4,8 @@ public class ConcertRequest {
     public record ReserveConcert(
             long userId,
             long scheduleId,
-            long seatId
+            long seatId,
+            long reservedId
     ) {
     }
 }

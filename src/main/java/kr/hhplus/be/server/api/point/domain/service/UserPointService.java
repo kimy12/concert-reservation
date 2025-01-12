@@ -3,6 +3,7 @@ package kr.hhplus.be.server.api.point.domain.service;
 import kr.hhplus.be.server.api.common.exception.CustomException;
 import kr.hhplus.be.server.api.point.domain.dto.PointHistory;
 import kr.hhplus.be.server.api.point.domain.dto.UserPoint;
+import kr.hhplus.be.server.api.point.domain.enums.PointHistoryType;
 import kr.hhplus.be.server.api.point.domain.repository.UserPointRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,7 @@ public class UserPointService {
     }
 
     @Transactional
-    public UserPoint chargePoint (long userId, long amount) {
+    public UserPoint chargeOrDeductPoint (long userId, long amount, PointHistoryType pointHistoryType) {
         UserPoint userPoint = userPointRepository.findByUserId(userId)
                                                     .orElseGet(() -> UserPoint.builder()
                                                             .userId(userId)
@@ -38,7 +39,7 @@ public class UserPointService {
         PointHistory pointHistory = PointHistory.builder()
                 .userPoint(userPoint)
                 .amount(amount)
-                .type(CHARGE)
+                .type(pointHistoryType)
                 .build();
 
         userPoint.addPointHistory(pointHistory);
@@ -46,22 +47,22 @@ public class UserPointService {
         return userPoint;
     }
 
-    @Transactional
-    public UserPoint deductPoint (long userId, long amount) {
-        UserPoint userPoint = userPointRepository.findByUserId(userId)
-                                                    .orElseThrow(()->new CustomException(POINT_NOT_FOUND));
-
-        userPoint.deductPoint(amount);
-
-        PointHistory pointHistory = PointHistory.builder()
-                .userPoint(userPoint)
-                .amount(amount)
-                .type(DEDUCT)
-                .build();
-
-        userPoint.addPointHistory(pointHistory);
-
-        return userPoint;
-    }
+//    @Transactional
+//    public UserPoint deductPoint (long userId, long amount) {
+//        UserPoint userPoint = userPointRepository.findByUserId(userId)
+//                                                    .orElseThrow(()->new CustomException(POINT_NOT_FOUND));
+//
+//        userPoint.deductPoint(amount);
+//
+//        PointHistory pointHistory = PointHistory.builder()
+//                .userPoint(userPoint)
+//                .amount(amount)
+//                .type(DEDUCT)
+//                .build();
+//
+//        userPoint.addPointHistory(pointHistory);
+//
+//        return userPoint;
+//    }
 
 }
