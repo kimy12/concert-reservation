@@ -10,18 +10,19 @@ import kr.hhplus.be.server.api.concert.domain.service.ReservationService;
 import kr.hhplus.be.server.api.concert.presentation.dto.ConcertRequest;
 import kr.hhplus.be.server.api.concert.presentation.dto.ConcertResponse;
 import kr.hhplus.be.server.api.point.domain.dto.UserPoint;
+import kr.hhplus.be.server.api.point.domain.enums.PointHistoryType;
 import kr.hhplus.be.server.api.point.domain.service.UserPointService;
-import kr.hhplus.be.server.api.point.domain.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static kr.hhplus.be.server.api.common.exception.enums.ErrorCode.SEAT_NOT_AVAILABLE;
 import static kr.hhplus.be.server.api.concert.domain.enums.ReservationStatus.RESERVED;
+import static kr.hhplus.be.server.api.point.domain.enums.PointHistoryType.CHARGE;
+import static kr.hhplus.be.server.api.point.domain.enums.PointHistoryType.DEDUCT;
 
 @Component
 @RequiredArgsConstructor
@@ -77,24 +78,17 @@ public class ConcertFacade {
     @Transactional
     public ConcertResponse.ReservedSeatInfo payReservedSeat(ConcertRequest.ReserveConcert request) {
 
-        ReservationDto reservedSeat = reservationService.findReservedSeatById(request.seatId())
+        ReservationDto reservedSeat = reservationService.findByReservedIdByCreatedAt(request.reservedId())
                 .orElseThrow(() -> new CustomException(SEAT_NOT_AVAILABLE));
 
+        UserPoint userPoint = userPointService.chargeOrDeductPoint(request.userId(), reservedSeat.getPrice(), DEDUCT);
 
-        long userId = request.userId();
-        long seatPrice = reservedSeat.getPrice();
-        UserPoint userPoint = userPointService.deductPoint(userId, seatPrice);
-
-
-        reservedSeat.setStatus(RESERVED);
-        ReservationDto updatedReservation = reservationService.updateReservation(reservedSeat)
-                .orElseThrow(() -> new CustomException(SEAT_NOT_AVAILABLE));
-
+        ReservationDto reservedInfo = reservationService.reservedSeatComplete(reservedSeat);
 
         return ConcertResponse.ReservedSeatInfo.builder()
-                .createAt(updatedReservation.getCreatedAt())
-                .price(updatedReservation.getPrice())
-                .seatNumber(updatedReservation.getSeatNumber())
+                .createAt(reservedInfo.getCreatedAt())
+                .price(reservedInfo.getPrice())
+                .seatNumber(reservedInfo.getSeatNumber())
                 .build();
     }
 }

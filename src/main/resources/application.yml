@@ -49,3 +49,6 @@ spring:
     username: application
     password: application
 
+#logging:
+#  level:
+#    org.springframework: DEBUG

@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.api.point.domain.dto;
+package kr.hhplus.be.server.api.user.domain.dto;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
@@ -7,7 +7,6 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
-import kr.hhplus.be.server.api.user.domain.dto.User;
 
 
 /**
@@ -16,7 +15,7 @@ import kr.hhplus.be.server.api.user.domain.dto.User;
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QUser extends EntityPathBase<User> {
 
-    private static final long serialVersionUID = -540922299L;
+    private static final long serialVersionUID = -79709598L;
 
     public static final QUser user = new QUser("user");
 

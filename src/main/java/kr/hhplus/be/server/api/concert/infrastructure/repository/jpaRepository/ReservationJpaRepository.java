@@ -28,4 +28,10 @@ public interface ReservationJpaRepository extends JpaRepository<Reservation, Lon
     Optional<Reservation> updateStatusById(@Param("reservationId") Long reservationId,
                           @Param("status") ReservationStatus status,
                           @Param("updatedAt") LocalDateTime updatedAt);
+
+    @Query("select r " +
+            "from Reservation r " +
+            "where r.id= :reservedId ")
+    Optional<Reservation> findByReservedIdByCreatedAt(Long reservedId);
+
 }

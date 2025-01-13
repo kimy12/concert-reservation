@@ -136,7 +136,7 @@ class ConcertControllerTest {
         // when // then
         mockMvc.perform(
                         post("/concerts/api/v1/reserveSeat")
-                                .content(objectMapper.writeValueAsString(new ConcertRequest.ReserveConcert(1L, 1L, 30)))
+                                .content(objectMapper.writeValueAsString(new ConcertRequest.ReserveConcert(1L, 1L, 30, 2)))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON)
                 )

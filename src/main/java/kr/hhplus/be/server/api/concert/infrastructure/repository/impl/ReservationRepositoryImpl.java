@@ -7,6 +7,7 @@ import kr.hhplus.be.server.api.concert.infrastructure.repository.jpaRepository.R
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
@@ -35,6 +36,12 @@ public class ReservationRepositoryImpl implements ReservationRepository {
     @Override
     public Optional<ReservationDto> updateReservation(ReservationDto reservedSeat) {
         return reservationJpaRepository.updateStatusById(reservedSeat.getId(), reservedSeat.getStatus(), reservedSeat.getUpdatedAt())
+                .map(Reservation :: toDto);
+    }
+
+    @Override
+    public Optional<ReservationDto> findById(Long reservedId) {
+        return reservationJpaRepository.findById(reservedId)
                 .map(Reservation :: toDto);
     }
 }
