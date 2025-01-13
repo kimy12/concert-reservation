@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static kr.hhplus.be.server.api.common.exception.enums.ErrorCode.POINT_NOT_FOUND;
 import static kr.hhplus.be.server.api.point.domain.enums.PointHistoryType.CHARGE;
 import static kr.hhplus.be.server.api.point.domain.enums.PointHistoryType.DEDUCT;
 
@@ -34,7 +33,11 @@ public class UserPointService {
                                                             .userId(userId)
                                                             .build());
 
-        userPoint.addPoints(amount);
+        if(pointHistoryType.equals(CHARGE)) {
+            userPoint.addPoints(amount);
+        } else if(pointHistoryType.equals(DEDUCT)) {
+            userPoint.deductPoint(amount);
+        }
 
         PointHistory pointHistory = PointHistory.builder()
                 .userPoint(userPoint)

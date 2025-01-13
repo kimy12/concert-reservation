@@ -5,14 +5,13 @@ import kr.hhplus.be.server.api.concert.domain.dto.ConcertInfoDto;
 import kr.hhplus.be.server.api.concert.domain.dto.ConcertScheduleDto;
 import kr.hhplus.be.server.api.concert.domain.dto.ConcertSeatDto;
 import kr.hhplus.be.server.api.concert.domain.dto.ReservationDto;
-import kr.hhplus.be.server.api.concert.domain.enums.ReservationStatus;
 import kr.hhplus.be.server.api.concert.domain.service.ConcertService;
 import kr.hhplus.be.server.api.concert.domain.service.ReservationService;
 import kr.hhplus.be.server.api.concert.presentation.dto.ConcertRequest;
 import kr.hhplus.be.server.api.concert.presentation.dto.ConcertResponse;
 import kr.hhplus.be.server.api.point.domain.dto.UserPoint;
+import kr.hhplus.be.server.api.point.domain.enums.PointHistoryType;
 import kr.hhplus.be.server.api.point.domain.service.UserPointService;
-import kr.hhplus.be.server.api.point.domain.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,6 +26,7 @@ import java.util.Optional;
 import static kr.hhplus.be.server.api.common.exception.enums.ErrorCode.POINT_INSUFFICIENT;
 import static kr.hhplus.be.server.api.common.exception.enums.ErrorCode.SEAT_NOT_AVAILABLE;
 import static kr.hhplus.be.server.api.concert.domain.enums.ReservationStatus.RESERVED;
+import static kr.hhplus.be.server.api.point.domain.enums.PointHistoryType.DEDUCT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
@@ -106,7 +106,7 @@ class ConcertFacadeTest {
     @Test
     void reservedSeat() {
         // given
-        ConcertRequest.ReserveConcert request = new ConcertRequest.ReserveConcert(1L, 2L, 3L);
+        ConcertRequest.ReserveConcert request = new ConcertRequest.ReserveConcert(1L, 2L, 3L, 3L);
         when(reservationService.findReservedSeatById(request.seatId())).thenReturn(Optional.empty());
 
         ReservationDto mockReservedSeat = ReservationDto.builder()
@@ -141,7 +141,7 @@ class ConcertFacadeTest {
                 .price(15000L)
                 .createdAt(LocalDateTime.now())
                 .build();
-        ConcertRequest.ReserveConcert request = new ConcertRequest.ReserveConcert(1L, 2L, 3L);
+        ConcertRequest.ReserveConcert request = new ConcertRequest.ReserveConcert(1L, 2L, 3L, 1L);
         when(reservationService.findReservedSeatById(request.seatId())).thenReturn(Optional.ofNullable(mockReservedSeat));
 
         // when & then
@@ -157,7 +157,7 @@ class ConcertFacadeTest {
     @Test
     void payReservedSeat() {
         // given
-        ConcertRequest.ReserveConcert request = new ConcertRequest.ReserveConcert(1L, 2L, 3L);
+        ConcertRequest.ReserveConcert request = new ConcertRequest.ReserveConcert(1L, 2L, 3L, 2L);
 
         ReservationDto mockReservedSeat = ReservationDto.builder()
                 .seatId(1L)
@@ -184,7 +184,7 @@ class ConcertFacadeTest {
                 .build();
 
         when(reservationService.findReservedSeatById(request.seatId())).thenReturn(Optional.of(mockReservedSeat));
-        when(userPointService.deductPoint(request.userId(), mockReservedSeat.getPrice())).thenReturn(mockUserPoint);
+        when(userPointService.chargeOrDeductPoint(request.userId(), mockReservedSeat.getPrice(), DEDUCT)).thenReturn(mockUserPoint);
         when(reservationService.updateReservation(mockReservedSeat)).thenReturn(Optional.of(updatedReservation));
 
         // when
@@ -194,7 +194,7 @@ class ConcertFacadeTest {
         assertThat(result.price()).isEqualTo(updatedReservation.getPrice());
         assertThat(result.seatNumber()).isEqualTo(updatedReservation.getSeatNumber());
         verify(reservationService, times(1)).findReservedSeatById(request.seatId());
-        verify(userPointService, times(1)).deductPoint(request.userId(), mockReservedSeat.getPrice());
+        verify(userPointService, times(1)).chargeOrDeductPoint(request.userId(), mockReservedSeat.getPrice(), DEDUCT);
         verify(reservationService, times(1)).updateReservation(mockReservedSeat);
     }
 
@@ -202,7 +202,7 @@ class ConcertFacadeTest {
     @Test
     void payReservedSeatThrowsExceptionForUnavailableSeat() {
         // given
-        ConcertRequest.ReserveConcert request = new ConcertRequest.ReserveConcert(1L, 2L, 3L);
+        ConcertRequest.ReserveConcert request = new ConcertRequest.ReserveConcert(1L, 2L, 3L,10);
         when(reservationService.findReservedSeatById(request.seatId())).thenReturn(Optional.empty());
 
         // when & then
@@ -211,7 +211,7 @@ class ConcertFacadeTest {
                 .hasMessageContaining(SEAT_NOT_AVAILABLE.getMessage());
 
         verify(reservationService, times(1)).findReservedSeatById(request.seatId());
-        verify(userPointService, times(0)).deductPoint(anyLong(), anyLong());
+        verify(userPointService, times(0)).chargeOrDeductPoint(anyLong(), anyLong(), any(PointHistoryType.class));
         verify(reservationService, times(0)).updateReservation(any());
     }
 
@@ -219,7 +219,7 @@ class ConcertFacadeTest {
     @Test
     void payReservedSeatThrowsExceptionForInsufficientPoints() {
         // given
-        ConcertRequest.ReserveConcert request = new ConcertRequest.ReserveConcert(1L, 2L, 3L);
+        ConcertRequest.ReserveConcert request = new ConcertRequest.ReserveConcert(1L, 2L, 3L, 11);
 
         ReservationDto mockReservedSeat = ReservationDto.builder()
                 .seatId(1L)
@@ -231,7 +231,7 @@ class ConcertFacadeTest {
                 .build();
 
         when(reservationService.findReservedSeatById(request.seatId())).thenReturn(Optional.of(mockReservedSeat));
-        when(userPointService.deductPoint(request.userId(), mockReservedSeat.getPrice()))
+        when(userPointService.chargeOrDeductPoint(request.userId(), mockReservedSeat.getPrice(), DEDUCT))
                 .thenThrow(new CustomException(POINT_INSUFFICIENT));
 
         // when & then
@@ -240,7 +240,7 @@ class ConcertFacadeTest {
                 .hasMessageContaining("포인트가 부족합니다.");
 
         verify(reservationService, times(1)).findReservedSeatById(request.seatId());
-        verify(userPointService, times(1)).deductPoint(request.userId(), mockReservedSeat.getPrice());
+        verify(userPointService, times(1)).chargeOrDeductPoint(request.userId(), mockReservedSeat.getPrice(), DEDUCT);
         verify(reservationService, times(0)).updateReservation(any());
     }
 

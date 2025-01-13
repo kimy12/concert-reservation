@@ -78,7 +78,7 @@ class UserPointServiceTest {
             when(userPointRepository.findByUserId(userId)).thenReturn(Optional.of(userPoint));
 
             // when
-            UserPoint result = userPointService.chargePoint(userId, amount);
+            UserPoint result = userPointService.chargeOrDeductPoint(userId, amount, CHARGE);
 
             // then
             assertThat(result).isNotNull();
@@ -98,7 +98,7 @@ class UserPointServiceTest {
             when(userPointRepository.findByUserId(userId)).thenReturn(Optional.of(userPoint));
 
             // when
-            userPointService.chargePoint(userId, amount);
+            userPointService.chargeOrDeductPoint(userId, amount, CHARGE);
 
             // then
             PointHistory addedHistory = userPoint.getPointHistory().get(0);
@@ -119,7 +119,7 @@ class UserPointServiceTest {
         when(userPointRepository.findByUserId(userId)).thenReturn(Optional.of(userPoint));
 
         // when
-        userPointService.deductPoint(userId, amount);
+        userPointService.chargeOrDeductPoint(userId, amount, DEDUCT);
 
         // then
         PointHistory addedHistory = userPoint.getPointHistory().get(0);
@@ -133,14 +133,15 @@ class UserPointServiceTest {
     void deductPointWithNoPoint() {
         // given
         long userId = 1L;
-        long amount = 5000L;UserPoint userPoint = UserPoint.builder()
+        long amount = 5000L;
+        UserPoint userPoint = UserPoint.builder()
                 .userId(userId)
-                .totalPoint(0).build();
-        when(userPointRepository.findByUserId(userId)).thenReturn(Optional.empty());
+                .totalPoint(4900L).build();
+        when(userPointRepository.findByUserId(userId)).thenReturn(Optional.of(userPoint));
 
         // when // then
-        assertThatThrownBy(()-> userPointService.deductPoint(userId, amount))
+        assertThatThrownBy(()-> userPointService.chargeOrDeductPoint(userId, amount, DEDUCT))
                 .isInstanceOf(CustomException.class)
-                .hasMessage("포인트가 존재하지 않습니다.");
+                .hasMessage("포인트가 부족합니다.");
     }
 }
