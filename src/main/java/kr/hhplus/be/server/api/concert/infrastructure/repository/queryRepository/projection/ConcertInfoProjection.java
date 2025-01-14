@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.api.concert.infrastructure.repository.queryRepository.projection;
 
 import com.querydsl.core.annotations.QueryProjection;
-import kr.hhplus.be.server.api.concert.domain.dto.ConcertInfoDto;
+import kr.hhplus.be.server.api.concert.domain.model.ConcertInfoModel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,8 +27,8 @@ public class ConcertInfoProjection {
         this.concertSchedule = concertSchedule;
     }
 
-    public ConcertInfoDto toDto(){
-        return ConcertInfoDto.builder()
+    public ConcertInfoModel toDto(){
+        return ConcertInfoModel.builder()
                 .concertId(this.concertId)
                 .title(this.title)
                 .scheduleId(this.scheduleId)

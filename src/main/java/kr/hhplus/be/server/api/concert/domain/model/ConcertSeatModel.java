@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.api.concert.domain.dto;
+package kr.hhplus.be.server.api.concert.domain.model;
 
 import kr.hhplus.be.server.api.concert.domain.enums.ConcertSeatStatus;
 import kr.hhplus.be.server.api.concert.presentation.dto.ConcertResponse;
@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class ConcertSeatDto {
+public class ConcertSeatModel {
     private long seatId;
 
     private long scheduleId;
@@ -21,7 +21,7 @@ public class ConcertSeatDto {
     ConcertSeatStatus status;
 
     @Builder
-    public ConcertSeatDto(long seatId, long scheduleId, long concertId,long price, long seatNumber, ConcertSeatStatus status) {
+    public ConcertSeatModel(long seatId, long scheduleId, long concertId, long price, long seatNumber, ConcertSeatStatus status) {
         this.seatId = seatId;
         this.scheduleId = scheduleId;
         this.concertId = concertId;

@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.api.concert.infrastructure.entity;
 
 import jakarta.persistence.*;
-import kr.hhplus.be.server.api.concert.domain.dto.ReservationDto;
+import kr.hhplus.be.server.api.concert.domain.model.ReservationModel;
 import kr.hhplus.be.server.api.concert.domain.enums.ReservationStatus;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -49,8 +49,8 @@ public class Reservation {
         this.price = price;
     }
 
-    public ReservationDto toDto() {
-        return ReservationDto.builder()
+    public ReservationModel toDto() {
+        return ReservationModel.builder()
                 .id(this.id)
                 .seatNumber(seatNumber)
                 .userId(this.userId)

@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.api.concert.infrastructure.repository.queryRepository.projection;
 
 import com.querydsl.core.annotations.QueryProjection;
-import kr.hhplus.be.server.api.concert.domain.dto.ConcertSeatDto;
+import kr.hhplus.be.server.api.concert.domain.model.ConcertSeatModel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -25,8 +25,8 @@ public class AvailableSeatsProjection {
         this.price = price;
     }
 
-    public ConcertSeatDto toDto(){
-        return ConcertSeatDto.builder()
+    public ConcertSeatModel toDto(){
+        return ConcertSeatModel.builder()
                 .scheduleId(this.scheduleId)
                 .seatId(this.seatId)
                 .concertId(this.concertId)

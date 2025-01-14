@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.api.concert.domain.dto;
+package kr.hhplus.be.server.api.concert.domain.model;
 
 import kr.hhplus.be.server.api.concert.domain.enums.ReservationStatus;
 import kr.hhplus.be.server.api.concert.infrastructure.entity.Reservation;
@@ -8,9 +8,11 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+import static kr.hhplus.be.server.api.concert.domain.enums.ReservationStatus.RESERVING;
+
 @Getter
 @Setter
-public class ReservationDto {
+public class ReservationModel {
 
     private Long id;
 
@@ -30,8 +32,19 @@ public class ReservationDto {
 
     private Long price;
 
+    // 처음 자리 선정을 위한 생성자
+    public ReservationModel(Long userId, Long seatId, Long seatNumber, Long scheduleId, Long price) {
+        this.userId = userId;
+        this.seatId = seatId;
+        this.seatNumber = seatNumber;
+        this.scheduleId = scheduleId;
+        this.status = RESERVING;
+        this.createdAt = LocalDateTime.now();
+        this.price = price;
+    }
+
     @Builder
-    public ReservationDto(Long id, Long seatNumber, Long userId, Long seatId, Long scheduleId, ReservationStatus status, LocalDateTime createdAt, LocalDateTime updatedAt, Long price) {
+    public ReservationModel(Long id, Long seatNumber, Long userId, Long seatId, Long scheduleId, ReservationStatus status, LocalDateTime createdAt, LocalDateTime updatedAt, Long price) {
         this.id = id;
         this.seatNumber = seatNumber;
         this.userId = userId;

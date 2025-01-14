@@ -1,9 +1,9 @@
 package kr.hhplus.be.server.api.concert.domain.service;
 
 import kr.hhplus.be.server.api.common.exception.CustomException;
-import kr.hhplus.be.server.api.concert.domain.dto.ConcertInfoDto;
-import kr.hhplus.be.server.api.concert.domain.dto.ConcertScheduleDto;
-import kr.hhplus.be.server.api.concert.domain.dto.ConcertSeatDto;
+import kr.hhplus.be.server.api.concert.domain.model.ConcertInfoModel;
+import kr.hhplus.be.server.api.concert.domain.model.ConcertScheduleModel;
+import kr.hhplus.be.server.api.concert.domain.model.ConcertSeatModel;
 import kr.hhplus.be.server.api.concert.domain.repository.ConcertRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,15 +36,15 @@ class ConcertServiceTest {
     void findConcertInfoById() {
         // given
         long concertId = 1L;
-        List<ConcertInfoDto> mockConcertInfo = List.of(
-                new ConcertInfoDto(concertId, "Concert A", 1L, 1,null),
-                new ConcertInfoDto(concertId, "Concert A", 2L, 2,null)
+        List<ConcertInfoModel> mockConcertInfo = List.of(
+                new ConcertInfoModel(concertId, "Concert A", 1L, 1,null),
+                new ConcertInfoModel(concertId, "Concert A", 2L, 2,null)
         );
 
         when(concertRepository.getConcertInfo(concertId)).thenReturn(mockConcertInfo);
 
         // when
-        List<ConcertInfoDto> result = concertService.findConcertInfoById(concertId);
+        List<ConcertInfoModel> result = concertService.findConcertInfoById(concertId);
 
         // then
         assertThat(result).hasSize(2);
@@ -72,15 +72,15 @@ class ConcertServiceTest {
     void findAvailableDates() {
         // given
         long concertId = 1L;
-        List<ConcertScheduleDto> mockSchedules = List.of(
-                new ConcertScheduleDto(concertId, "title1",1L, 1, LocalDateTime.now()),
-                new ConcertScheduleDto(concertId, "title1",2L, 2, LocalDateTime.now())
+        List<ConcertScheduleModel> mockSchedules = List.of(
+                new ConcertScheduleModel(concertId, "title1",1L, 1, LocalDateTime.now()),
+                new ConcertScheduleModel(concertId, "title1",2L, 2, LocalDateTime.now())
         );
 
         when(concertRepository.getAvailableDates(concertId)).thenReturn(mockSchedules);
 
         // when
-        List<ConcertScheduleDto> result = concertService.findAvailableDates(concertId);
+        List<ConcertScheduleModel> result = concertService.findAvailableDates(concertId);
 
         // then
         assertThat(result).hasSize(2);
@@ -107,15 +107,15 @@ class ConcertServiceTest {
     void findAvailableSeats() {
         // given
         long concertId = 1L;
-        List<ConcertSeatDto> mockSeats = List.of(
-                new ConcertSeatDto(1L, 1L, 1L, 10000L, 30, null),
-                new ConcertSeatDto(2L, 2L, 1L, 12000L, 31, null)
+        List<ConcertSeatModel> mockSeats = List.of(
+                new ConcertSeatModel(1L, 1L, 1L, 10000L, 30, null),
+                new ConcertSeatModel(2L, 2L, 1L, 12000L, 31, null)
         );
 
         when(concertRepository.getAvailableSeats(concertId)).thenReturn(mockSeats);
 
         // when
-        List<ConcertSeatDto> result = concertService.findAvailableSeats(concertId);
+        List<ConcertSeatModel> result = concertService.findAvailableSeats(concertId);
 
         // then
         assertThat(result).hasSize(2);

@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.api.concert.domain.dto;
+package kr.hhplus.be.server.api.concert.domain.model;
 
 import kr.hhplus.be.server.api.concert.presentation.dto.ConcertResponse;
 import lombok.Builder;
@@ -8,7 +8,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Getter @Setter
-public class ConcertInfoDto {
+public class ConcertInfoModel {
 
     private long concertId;
     private String title;
@@ -17,7 +17,7 @@ public class ConcertInfoDto {
     private LocalDateTime concertSchedule;
 
     @Builder
-    public ConcertInfoDto(long concertId, String title, long scheduleId, long seq, LocalDateTime concertSchedule) {
+    public ConcertInfoModel(long concertId, String title, long scheduleId, long seq, LocalDateTime concertSchedule) {
         this.concertId = concertId;
         this.title = title;
         this.scheduleId = scheduleId;

@@ -1,8 +1,8 @@
 package kr.hhplus.be.server.api.concert.domain.repository;
 
-import kr.hhplus.be.server.api.concert.domain.dto.ConcertInfoDto;
-import kr.hhplus.be.server.api.concert.domain.dto.ConcertScheduleDto;
-import kr.hhplus.be.server.api.concert.domain.dto.ConcertSeatDto;
+import kr.hhplus.be.server.api.concert.domain.model.ConcertInfoModel;
+import kr.hhplus.be.server.api.concert.domain.model.ConcertScheduleModel;
+import kr.hhplus.be.server.api.concert.domain.model.ConcertSeatModel;
 import kr.hhplus.be.server.api.concert.infrastructure.entity.ConcertInfo;
 import kr.hhplus.be.server.api.concert.infrastructure.entity.ConcertSchedule;
 import kr.hhplus.be.server.api.concert.infrastructure.entity.ConcertSeat;
@@ -12,7 +12,6 @@ import kr.hhplus.be.server.api.concert.infrastructure.repository.jpaRepository.C
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -58,7 +57,7 @@ class ConcertRepositoryTest {
         scheduleJpaRepository.saveAll(List.of(schedule1, schedule2));
 
         // when
-        List<ConcertInfoDto> concertInfo = repository.getConcertInfo(concertId);
+        List<ConcertInfoModel> concertInfo = repository.getConcertInfo(concertId);
 
         // then
         assertThat(concertInfo).hasSize(2);
@@ -105,7 +104,7 @@ class ConcertRepositoryTest {
         seatJpaRepository.saveAll(List.of(seat1, seat2, seat3));
 
         // when
-        List<ConcertScheduleDto> availableDates = repository.getAvailableDates(schedule1.getId());
+        List<ConcertScheduleModel> availableDates = repository.getAvailableDates(schedule1.getId());
 
         // then
         assertThat(availableDates).hasSize(2);
@@ -150,7 +149,7 @@ class ConcertRepositoryTest {
         seatJpaRepository.saveAll(List.of(seat1, seat2, seat3));
 
         // when
-        List<ConcertSeatDto> availableSeats = repository.getAvailableSeats(schedule1.getId());
+        List<ConcertSeatModel> availableSeats = repository.getAvailableSeats(schedule1.getId());
 
         // then
         assertThat(availableSeats).hasSize(2);
