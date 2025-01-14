@@ -2,6 +2,8 @@ package kr.hhplus.be.server.api.concert.infrastructure.entity;
 
 import jakarta.persistence.*;
 import kr.hhplus.be.server.api.concert.domain.enums.ConcertSeatStatus;
+import kr.hhplus.be.server.api.concert.domain.model.ConcertSeatModel;
+import kr.hhplus.be.server.api.concert.presentation.dto.ConcertResponse;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -32,5 +34,16 @@ public class ConcertSeat {
         this.seatNumber = seatNumber;
         this.price = price;
         this.status = status;
+    }
+
+    public ConcertSeatModel toModel() {
+        return ConcertSeatModel.builder()
+                .seatId(this.id)
+                .concertId(this.scheduleId)
+                .scheduleId(this.scheduleId)
+                .seatNumber(this.seatNumber)
+                .price(this.price)
+                .status(this.status)
+                .build();
     }
 }
