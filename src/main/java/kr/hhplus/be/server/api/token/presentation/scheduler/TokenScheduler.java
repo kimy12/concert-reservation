@@ -21,7 +21,11 @@ public class TokenScheduler {
         log.info("토큰 활성화 스케줄러");
         tokenService.findAllPendingTokens(ACTIVE_TOKEN)
                 .forEach(token -> {
-                    tokenService.changeTokenStatusActive(token.getId());
+                    try {
+                        tokenService.changeTokenStatusActive(token.getId());
+                    } catch (Exception e) {
+                        log.error("exception Token ID: {}", token.getId(), e);
+                    }
                 });
 
     }
@@ -32,7 +36,11 @@ public class TokenScheduler {
         LocalDateTime now = LocalDateTime.now();
         tokenService.findAllByTokenStatusActive()
                 .forEach(token -> {
-                    if(token.checkCreatedAt(now)) tokenService.deleteTokenInfo(token.getId());
+                    try {
+                        if (token.checkExpireAt(now)) tokenService.deleteTokenInfo(token.getId());
+                    } catch (Exception e) {
+                        log.error("exception Token ID: {}", token.getId(), e);
+                    }
                 });
     }
 }

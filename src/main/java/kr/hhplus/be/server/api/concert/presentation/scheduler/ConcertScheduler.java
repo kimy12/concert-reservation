@@ -22,7 +22,12 @@ public class ConcertScheduler {
         LocalDateTime now = LocalDateTime.now();
         concertService.findSeatInfo()
                 .forEach(concertSeatModel->{
-                    if(concertSeatModel.checkCreatedAt(now)) concertService.changeSeatStatus(concertSeatModel.getSeatId());
+                    try {
+                        if (concertSeatModel.checkCreatedAt(now))
+                            concertService.changeSeatStatus(concertSeatModel.getSeatId());
+                    } catch (Exception e) {
+                        log.error("exception Seat ID: {}", concertSeatModel.getSeatId(), e);
+                    }
                 });
     }
 }
