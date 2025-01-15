@@ -1,5 +1,7 @@
 package kr.hhplus.be.server.api.token.infrastructure.repository;
 
+import kr.hhplus.be.server.api.token.domain.enums.TokenStatus;
+import kr.hhplus.be.server.api.token.domain.model.TokenModel;
 import kr.hhplus.be.server.api.token.infrastructure.entity.Token;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -12,7 +14,7 @@ import java.util.List;
 
 public interface TokenJpaRepository extends JpaRepository<Token, Long> {
 
-    @Modifying
-    @Query("DELETE FROM Token t WHERE t.createdAt > :thisTime")
-    int deleteTokensOlderThan(@Param("thisTime") LocalDateTime thisTime);
+    List<Token> findAllByTokenStatusOrderByIdAsc (TokenStatus tokenStatus);
+
+    List<Token> findAllByTokenStatus(TokenStatus tokenStatus);
 }

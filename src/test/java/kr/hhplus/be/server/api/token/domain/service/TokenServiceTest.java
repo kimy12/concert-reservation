@@ -2,7 +2,7 @@ package kr.hhplus.be.server.api.token.domain.service;
 
 import kr.hhplus.be.server.api.common.exception.CustomException;
 import kr.hhplus.be.server.api.common.exception.enums.ErrorCode;
-import kr.hhplus.be.server.api.token.domain.dto.TokenDto;
+import kr.hhplus.be.server.api.token.domain.model.TokenModel;
 import kr.hhplus.be.server.api.token.domain.enums.TokenStatus;
 import kr.hhplus.be.server.api.token.domain.repository.TokenRepository;
 import kr.hhplus.be.server.api.token.infrastructure.entity.Token;
@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -39,13 +40,13 @@ class TokenServiceTest {
     @Test
     void createUUID() {
         // given
-        TokenDto tokenDto = TokenDto.builder()
+        TokenModel tokenModel = TokenModel.builder()
                 .id(1L)
                 .userId(123L)
                 .tokenStatus(TokenStatus.PENDING)
                 .build();
 
-        Token tokenEntity = tokenDto.toEntity();
+        Token tokenEntity = tokenModel.toEntity();
 
         when(tokenRepository.save(any(Token.class))).thenReturn(tokenEntity.toDto());
         when(tokenUUIDManager.createUuidWithLong(1L)).thenReturn(UUID.randomUUID());
@@ -65,17 +66,17 @@ class TokenServiceTest {
         // given
         UUID tokenUUID = UUID.randomUUID();
         long tokenId = 1L;
-        TokenDto tokenDto = TokenDto.builder()
+        TokenModel tokenModel = TokenModel.builder()
                 .id(tokenId)
                 .userId(123L)
                 .tokenStatus(TokenStatus.PENDING)
                 .build();
 
         when(tokenUUIDManager.getTokenIdByTokenUuid(tokenUUID)).thenReturn(tokenId);
-        when(tokenRepository.findByTokenId(tokenId)).thenReturn(Optional.of(tokenDto));
+        when(tokenRepository.findByTokenId(tokenId)).thenReturn(Optional.of(tokenModel));
 
         // when
-        TokenDto foundToken = tokenService.getTokenInfoByUUID(tokenUUID);
+        TokenModel foundToken = tokenService.getTokenInfoByUUID(tokenUUID);
 
         // then
         assertThat(foundToken).isNotNull();
@@ -102,4 +103,53 @@ class TokenServiceTest {
         verify(tokenRepository, times(1)).findByTokenId(invalidTokenId);
     }
 
+    @DisplayName("pending 상태의 토큰을 필요한 개수 만큼 가져온다.")
+    @Test
+    void findAllPendingTokens() {
+        // given
+        TokenModel tokenModel1 = new TokenModel(1, 1, TokenStatus.PENDING, LocalDateTime.of(2025, 1, 2, 1, 1));
+        TokenModel tokenModel2 = new TokenModel(2, 2, TokenStatus.PENDING, LocalDateTime.of(2025, 1, 2, 1, 1));
+        List<TokenModel> result = List.of(tokenModel1, tokenModel2);
+        TokenModel tokenModel3 = new TokenModel(3, 3, TokenStatus.ACTIVE, LocalDateTime.of(2025, 1, 2, 1, 1));
+        TokenModel tokenModel4 = new TokenModel(4, 4, TokenStatus.ACTIVE, LocalDateTime.of(2025, 1, 2, 1, 1));
+        List<TokenModel> result2 = List.of(tokenModel3, tokenModel4);
+        when(tokenRepository.findAllByTokenStatus(TokenStatus.ACTIVE)).thenReturn(result2);
+        when(tokenRepository.findAllByTokenStatusOrderByIdAsc(TokenStatus.PENDING)).thenReturn(result);
+
+        // when
+        List<TokenModel> allPendingTokens = tokenService.findAllPendingTokens(3);
+
+        // then
+        assertThat(allPendingTokens).hasSize(1);
+        assertThat(allPendingTokens.get(0)).isEqualTo(tokenModel1);
+
+    }
+
+    @DisplayName("토큰 상태코드를 activate로 변경한다.")
+    @Test
+    void changeTokenStatusActive() {
+        // given
+        long tokenId = 1L;
+        TokenModel tokenModel = new TokenModel(tokenId, 1, TokenStatus.PENDING, LocalDateTime.of(2025, 1, 2, 1, 1));
+        when(tokenRepository.findByTokenId(tokenId)).thenReturn(Optional.of(tokenModel));
+
+        // when
+        tokenService.changeTokenStatusActive(tokenId);
+
+        // then
+        assertThat(tokenModel.getTokenStatus()).isEqualTo(TokenStatus.ACTIVE);
+    }
+
+    @DisplayName("유효 하지 않은 토큰의 토큰상태를 수정하려고 하면 예외가 발생한다.")
+    @Test
+    void changeTokenStatusActiveWithoutTokenInfo() {
+        // given
+        long tokenId = 1L;
+        when(tokenRepository.findByTokenId(tokenId)).thenReturn(Optional.empty());
+
+        //when // then
+        assertThatThrownBy(() -> tokenService.changeTokenStatusActive(tokenId))
+                .isInstanceOf(CustomException.class)
+                .hasMessageContaining(ErrorCode.TOKEN_INVALID.getMessage());
+    }
 }

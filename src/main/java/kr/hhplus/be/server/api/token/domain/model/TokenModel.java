@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.api.token.domain.dto;
+package kr.hhplus.be.server.api.token.domain.model;
 
 import kr.hhplus.be.server.api.token.domain.enums.TokenStatus;
 import kr.hhplus.be.server.api.token.infrastructure.entity.Token;
@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class TokenDto {
+public class TokenModel {
 
     private long id;
 
@@ -21,7 +21,7 @@ public class TokenDto {
     private LocalDateTime createdAt;
 
     @Builder
-    public TokenDto(long id, long userId, TokenStatus tokenStatus, LocalDateTime createdAt) {
+    public TokenModel(long id, long userId, TokenStatus tokenStatus, LocalDateTime createdAt) {
         this.id = id;
         this.userId = userId;
         this.tokenStatus = tokenStatus;
@@ -35,5 +35,14 @@ public class TokenDto {
                 .createdAt(this.createdAt)
                 .userId(this.userId)
                 .build();
+    }
+
+    public void turnToActive (){
+        this.tokenStatus = TokenStatus.ACTIVE;
+    }
+
+    public boolean checkCreatedAt (LocalDateTime now) {
+        LocalDateTime expiredAt = this.createdAt.plusMinutes(10);
+        return expiredAt.isBefore(now);
     }
 }

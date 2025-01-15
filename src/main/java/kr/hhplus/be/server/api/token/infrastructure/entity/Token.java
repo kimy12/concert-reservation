@@ -1,10 +1,7 @@
 package kr.hhplus.be.server.api.token.infrastructure.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import kr.hhplus.be.server.api.token.domain.dto.TokenDto;
+import jakarta.persistence.*;
+import kr.hhplus.be.server.api.token.domain.model.TokenModel;
 import kr.hhplus.be.server.api.token.domain.enums.TokenStatus;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -24,6 +21,7 @@ public class Token {
 
     private long userId;
 
+    @Enumerated(EnumType.STRING)
     private TokenStatus tokenStatus;
 
     private LocalDateTime createdAt;
@@ -36,12 +34,13 @@ public class Token {
         this.createdAt = createdAt;
     }
 
-    public TokenDto toDto() {
-        return TokenDto.builder()
+    public TokenModel toDto() {
+        return TokenModel.builder()
                 .id(this.id)
                 .userId(this.userId)
                 .tokenStatus(this.tokenStatus)
                 .createdAt(this.createdAt)
                 .build();
     }
+
 }

@@ -1,7 +1,6 @@
 package kr.hhplus.be.server.api.token.domain.repository;
 
-import kr.hhplus.be.server.api.token.domain.dto.TokenDto;
-import kr.hhplus.be.server.api.token.domain.enums.TokenStatus;
+import kr.hhplus.be.server.api.token.domain.model.TokenModel;
 import kr.hhplus.be.server.api.token.infrastructure.entity.Token;
 import kr.hhplus.be.server.api.token.infrastructure.repository.TokenJpaRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -11,7 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 import static kr.hhplus.be.server.api.token.domain.enums.TokenStatus.PENDING;
@@ -42,7 +40,7 @@ class TokenRepositoryTest {
         Token token = tokenJpaRepository.save(build);
 
         // when
-        Optional<TokenDto> byTokenId =
+        Optional<TokenModel> byTokenId =
                 tokenRepository.findByTokenId(token.getId());
 
         // then
@@ -65,7 +63,7 @@ class TokenRepositoryTest {
                 .build();
 
         // when
-        TokenDto saved = tokenRepository.save(build);
+        TokenModel saved = tokenRepository.save(build);
 
         // then
         assertThat(saved).isNotNull();

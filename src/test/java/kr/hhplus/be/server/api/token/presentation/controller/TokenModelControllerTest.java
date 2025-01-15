@@ -16,7 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(TokenController.class)
-class TokenDtoControllerTest {
+class TokenModelControllerTest {
 
     @Autowired
     protected MockMvc mockMvc;

@@ -1,0 +1,38 @@
+package kr.hhplus.be.server.api.token.presentation.scheduler;
+
+import kr.hhplus.be.server.api.token.domain.service.TokenService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
+
+@Slf4j
+@Component
+@RequiredArgsConstructor
+public class TokenScheduler {
+
+    private static final int ACTIVE_TOKEN = 50;
+    private final TokenService tokenService;
+
+    @Scheduled(fixedDelayString = "60000")
+    public void toTokenStatusActive(){
+        log.info("토큰 활성화 스캐줄러");
+        tokenService.findAllPendingTokens(ACTIVE_TOKEN)
+                .forEach(token -> {
+                    tokenService.changeTokenStatusActive(token.getId());
+                });
+
+    }
+
+    @Scheduled(fixedDelayString = "60000")
+    public void toDeleteToken(){
+        log.info("토큰 삭제 스캐줄러");
+        LocalDateTime now = LocalDateTime.now();
+        tokenService.findAllByTokenStatusActive()
+                .forEach(token -> {
+                    if(token.checkCreatedAt(now)) tokenService.deleteTokenInfo(token.getId());
+                });
+    }
+}
