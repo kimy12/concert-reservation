@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,5 +50,22 @@ public class ConcertService {
                 .orElseThrow(
                         ()-> new CustomException(SEAT_NOT_AVAILABLE)
                 );
+    }
+
+    /**
+     * 스케줄러 :: 선점되어있는 자리 리스트
+     */
+    public List<ConcertSeatModel> findSeatInfo (){
+        return concertRepository.getAllSeatsForScheduler();
+    }
+
+    /**
+     * 스케줄러 :: 자리 상태 변경
+     */
+    @Transactional
+    public void changeSeatStatus(Long seatId){
+        ConcertSeatModel seatInfo = concertRepository.findSeatInfoBySeatId(seatId)
+                .orElseThrow(() -> new CustomException(SEAT_NOT_FOUND));
+        seatInfo.turnToVoided();
     }
 }

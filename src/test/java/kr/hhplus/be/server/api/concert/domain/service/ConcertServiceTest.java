@@ -14,8 +14,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static kr.hhplus.be.server.api.common.exception.enums.ErrorCode.*;
+import static kr.hhplus.be.server.api.concert.domain.enums.ConcertSeatStatus.VOIDED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
@@ -108,8 +110,22 @@ class ConcertServiceTest {
         // given
         long concertId = 1L;
         List<ConcertSeatModel> mockSeats = List.of(
-                new ConcertSeatModel(1L, 1L, 1L, 10000L, 30, null),
-                new ConcertSeatModel(2L, 2L, 1L, 12000L, 31, null)
+                ConcertSeatModel.builder()
+                        .seatId(1L)
+                        .scheduleId(1L)
+                        .concertId(1L)
+                        .price(10000L)
+                        .seatNumber(30)
+                        .status(null)
+                        .build(),
+                ConcertSeatModel.builder()
+                        .seatId(2L)
+                        .scheduleId(2L)
+                        .concertId(1L)
+                        .price(12000L)
+                        .seatNumber(31)
+                        .status(null)
+                        .build()
         );
 
         when(concertRepository.getAvailableSeats(concertId)).thenReturn(mockSeats);
@@ -135,5 +151,27 @@ class ConcertServiceTest {
                 .hasMessageContaining(RESERVATION_SEAT_NOT_FOUND.getMessage());
 
         verify(concertRepository, times(1)).getAvailableSeats(concertId);
+    }
+
+    @DisplayName("자리 상태를 VOIDED 로 변경한다.")
+    @Test
+    void changeSeatStatus() {
+        // given
+        long seatId = 1L;
+        ConcertSeatModel result = ConcertSeatModel.builder()
+                .seatId(seatId)
+                .scheduleId(1L)
+                .concertId(1L)
+                .price(10000L)
+                .seatNumber(30)
+                .status(null)
+                .build();
+
+        when(concertRepository.findSeatInfoBySeatId(seatId)).thenReturn(Optional.of(result));
+        // when
+        concertService.changeSeatStatus(seatId);
+
+        // then
+        assertThat(result.getStatus()).isEqualTo(VOIDED);
     }
 }

@@ -17,4 +17,8 @@ public interface ConcertRepository {
     List<ConcertSeatModel> getAvailableSeats (long scheduleId);
 
     Optional<ConcertSeatModel> findBySeatNumberAndScheduleId(Long seatNumber, Long scheduleId);
+
+    List<ConcertSeatModel> getAllSeatsForScheduler();
+
+    Optional<ConcertSeatModel> findSeatInfoBySeatId(Long seatId);
 }

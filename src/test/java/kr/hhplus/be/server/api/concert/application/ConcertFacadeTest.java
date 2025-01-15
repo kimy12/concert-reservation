@@ -9,8 +9,6 @@ import kr.hhplus.be.server.api.concert.domain.service.ConcertService;
 import kr.hhplus.be.server.api.concert.domain.service.ReservationService;
 import kr.hhplus.be.server.api.concert.presentation.dto.ConcertRequest;
 import kr.hhplus.be.server.api.concert.presentation.dto.ConcertResponse;
-import kr.hhplus.be.server.api.point.domain.dto.UserPoint;
-import kr.hhplus.be.server.api.point.domain.enums.PointHistoryType;
 import kr.hhplus.be.server.api.point.domain.service.UserPointService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -89,8 +87,22 @@ class ConcertFacadeTest {
         // given
         long concertId = 1L;
         List<ConcertSeatModel> mockSeats = List.of(
-                new ConcertSeatModel(1L, 1L, 1L, 10000L, 1, null),
-                new ConcertSeatModel(2L, 2L, 1L, 12000L, 2, null)
+                ConcertSeatModel.builder()
+                        .seatId(1L)
+                        .scheduleId(1L)
+                        .concertId(1L)
+                        .price(10000L)
+                        .seatNumber(30)
+                        .status(null)
+                        .build(),
+                ConcertSeatModel.builder()
+                        .seatId(2L)
+                        .scheduleId(2L)
+                        .concertId(1L)
+                        .price(12000L)
+                        .seatNumber(31)
+                        .status(null)
+                        .build()
         );
         when(concertService.findAvailableSeats(concertId)).thenReturn(mockSeats);
 
@@ -116,7 +128,14 @@ class ConcertFacadeTest {
                 .createdAt(LocalDateTime.now())
                 .build();
 
-        ConcertSeatModel seatInfo = new ConcertSeatModel(1L,3L,1L, 15000L, 10L, null);
+        ConcertSeatModel seatInfo = ConcertSeatModel.builder()
+                                                    .seatId(1L)
+                                                    .scheduleId(3L)
+                                                    .concertId(1L)
+                                                    .price(15000L)
+                                                    .seatNumber(10L)
+                                                    .status(null)
+                                                    .build();
 
         when(concertService.findSeatInfo(request.seatId(), request.scheduleId())).thenReturn(seatInfo);
         when(reservationService.reserveSeat(request.userId(), seatInfo)).thenReturn(mockReservedSeat);

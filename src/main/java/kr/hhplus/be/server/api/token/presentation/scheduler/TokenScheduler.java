@@ -18,7 +18,7 @@ public class TokenScheduler {
 
     @Scheduled(fixedDelayString = "60000")
     public void toTokenStatusActive(){
-        log.info("토큰 활성화 스캐줄러");
+        log.info("토큰 활성화 스케줄러");
         tokenService.findAllPendingTokens(ACTIVE_TOKEN)
                 .forEach(token -> {
                     tokenService.changeTokenStatusActive(token.getId());
@@ -28,7 +28,7 @@ public class TokenScheduler {
 
     @Scheduled(fixedDelayString = "60000")
     public void toDeleteToken(){
-        log.info("토큰 삭제 스캐줄러");
+        log.info("토큰 삭제 스케줄러");
         LocalDateTime now = LocalDateTime.now();
         tokenService.findAllByTokenStatusActive()
                 .forEach(token -> {

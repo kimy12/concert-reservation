@@ -44,7 +44,15 @@ class ReservationServiceTest {
                         .build();
 
         when(reservationRepository.save(any(Reservation.class))).thenReturn(reservationModel);
-        ConcertSeatModel param = new ConcertSeatModel(userId,1L,1L,5000L,1L, null);
+        ConcertSeatModel param = ConcertSeatModel.builder()
+                                                    .seatId(userId)
+                                                    .scheduleId(1L)
+                                                    .concertId(1L)
+                                                    .price(5000L)
+                                                    .seatNumber(1L)
+                                                    .status(null)
+                                                    .build();
+
 
         // when
         ReservationModel result = reservationService.reserveSeat(userId, param);

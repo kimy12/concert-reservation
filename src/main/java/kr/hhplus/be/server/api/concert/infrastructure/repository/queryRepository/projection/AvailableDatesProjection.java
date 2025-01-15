@@ -32,7 +32,7 @@ public class AvailableDatesProjection {
         this.startAt = startAt;
     }
 
-    public ConcertScheduleModel toDto() {
+    public ConcertScheduleModel toModel() {
         return ConcertScheduleModel.builder()
                 .title(this.title)
                 .scheduleId(this.scheduleId)

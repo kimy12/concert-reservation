@@ -10,6 +10,7 @@ import kr.hhplus.be.server.api.concert.infrastructure.repository.queryRepository
 import kr.hhplus.be.server.api.concert.infrastructure.repository.queryRepository.projection.AvailableDatesProjection;
 import kr.hhplus.be.server.api.concert.infrastructure.repository.queryRepository.projection.AvailableSeatsProjection;
 import kr.hhplus.be.server.api.concert.infrastructure.repository.queryRepository.projection.ConcertInfoProjection;
+import kr.hhplus.be.server.api.concert.infrastructure.repository.queryRepository.projection.SeatInfoProjection;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -28,7 +29,7 @@ public class ConcertRepositoryImpl implements ConcertRepository {
     public List<ConcertInfoModel> getConcertInfo(long concertId) {
         return concertInfoQueryRepository.getAllConcertInfos(concertId)
                 .stream()
-                .map(ConcertInfoProjection::toDto)
+                .map(ConcertInfoProjection::toModel)
                 .collect(Collectors.toList());
     }
 
@@ -36,7 +37,7 @@ public class ConcertRepositoryImpl implements ConcertRepository {
     public List<ConcertScheduleModel> getAvailableDates(long concertId) {
         return concertInfoQueryRepository.getAllAvailableDates(concertId)
                 .stream()
-                .map(AvailableDatesProjection::toDto)
+                .map(AvailableDatesProjection::toModel)
                 .collect(Collectors.toList());
     }
 
@@ -44,13 +45,27 @@ public class ConcertRepositoryImpl implements ConcertRepository {
     public List<ConcertSeatModel> getAvailableSeats(long scheduleId) {
         return concertInfoQueryRepository.getAllAvailableSeats(scheduleId)
                 .stream()
-                .map(AvailableSeatsProjection::toDto)
+                .map(AvailableSeatsProjection::toModel)
                 .collect(Collectors.toList());
     }
 
     @Override
     public Optional<ConcertSeatModel> findBySeatNumberAndScheduleId(Long seatNumber, Long scheduleId) {
         return concertSeatJpaRepository.findBySeatNumberAndScheduleId(seatNumber, scheduleId)
+                .map(ConcertSeat :: toModel);
+    }
+
+    @Override
+    public List<ConcertSeatModel> getAllSeatsForScheduler() {
+        return concertInfoQueryRepository.getAllSeats()
+                .stream()
+                .map(SeatInfoProjection::toModel)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<ConcertSeatModel> findSeatInfoBySeatId(Long seatId) {
+        return concertSeatJpaRepository.findById(seatId)
                 .map(ConcertSeat :: toModel);
     }
 }

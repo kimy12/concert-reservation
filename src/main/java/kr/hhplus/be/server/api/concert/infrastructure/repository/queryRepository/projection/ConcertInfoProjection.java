@@ -27,7 +27,7 @@ public class ConcertInfoProjection {
         this.concertSchedule = concertSchedule;
     }
 
-    public ConcertInfoModel toDto(){
+    public ConcertInfoModel toModel(){
         return ConcertInfoModel.builder()
                 .concertId(this.concertId)
                 .title(this.title)

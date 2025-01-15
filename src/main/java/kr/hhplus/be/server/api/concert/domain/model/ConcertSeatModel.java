@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter @Setter
 public class ConcertSeatModel {
     private long seatId;
@@ -20,14 +22,18 @@ public class ConcertSeatModel {
 
     ConcertSeatStatus status;
 
+    // reservation 의 createdAt
+    private LocalDateTime createdAt;
+
     @Builder
-    public ConcertSeatModel(long seatId, long scheduleId, long concertId, long price, long seatNumber, ConcertSeatStatus status) {
+    public ConcertSeatModel(long seatId, long scheduleId, long concertId, long price, long seatNumber, ConcertSeatStatus status, LocalDateTime createdAt) {
         this.seatId = seatId;
         this.scheduleId = scheduleId;
         this.concertId = concertId;
         this.price = price;
         this.seatNumber = seatNumber;
         this.status = status;
+        this.createdAt = createdAt;
     }
 
     public ConcertResponse.SeatInfo toResponseDto (){
@@ -39,4 +45,14 @@ public class ConcertSeatModel {
                 .price(this.price)
                 .build();
     }
+
+    public void turnToVoided (){
+        this.status = ConcertSeatStatus.VOIDED;
+    }
+
+    public boolean checkCreatedAt (LocalDateTime now) {
+        LocalDateTime expiredAt = this.createdAt.plusMinutes(5);
+        return expiredAt.isBefore(now);
+    }
+
 }
