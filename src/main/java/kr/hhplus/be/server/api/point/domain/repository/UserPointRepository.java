@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.api.point.domain.repository;
 
-import kr.hhplus.be.server.api.point.domain.dto.UserPoint;
+import kr.hhplus.be.server.api.point.domain.entity.UserPoint;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

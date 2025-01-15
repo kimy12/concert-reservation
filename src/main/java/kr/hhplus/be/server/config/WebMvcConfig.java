@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.config.webmvc;
+package kr.hhplus.be.server.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hhplus.be.server.api.common.interceptor.TokenInterceptor;

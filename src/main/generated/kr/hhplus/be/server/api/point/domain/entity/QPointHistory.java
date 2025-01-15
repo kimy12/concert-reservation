@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.api.point.domain.dto;
+package kr.hhplus.be.server.api.point.domain.entity;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
@@ -16,7 +16,7 @@ import com.querydsl.core.types.dsl.PathInits;
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QPointHistory extends EntityPathBase<PointHistory> {
 
-    private static final long serialVersionUID = -223351458L;
+    private static final long serialVersionUID = -537077596L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 

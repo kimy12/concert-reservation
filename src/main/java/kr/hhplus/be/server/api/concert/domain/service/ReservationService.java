@@ -8,10 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
-import static kr.hhplus.be.server.api.common.exception.enums.ErrorCode.SEAT_NOT_AVAILABLE;
 import static kr.hhplus.be.server.api.concert.domain.enums.ReservationStatus.RESERVED;
+import static kr.hhplus.be.server.api.concert.domain.enums.error.SeatErrorCode.SEAT_NOT_AVAILABLE;
 
 
 @Service

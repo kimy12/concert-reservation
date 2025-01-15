@@ -9,8 +9,8 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-import static kr.hhplus.be.server.api.common.exception.enums.ErrorCode.SEAT_NOT_AVAILABLE;
 import static kr.hhplus.be.server.api.concert.domain.enums.ReservationStatus.RESERVING;
+import static kr.hhplus.be.server.api.concert.domain.enums.error.SeatErrorCode.SEAT_NOT_AVAILABLE;
 
 @Getter
 @Setter

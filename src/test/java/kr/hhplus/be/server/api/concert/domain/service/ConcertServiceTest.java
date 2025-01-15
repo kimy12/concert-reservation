@@ -16,8 +16,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static kr.hhplus.be.server.api.common.exception.enums.ErrorCode.*;
 import static kr.hhplus.be.server.api.concert.domain.enums.ConcertSeatStatus.VOIDED;
+import static kr.hhplus.be.server.api.concert.domain.enums.error.ConcertErrorCode.CONCERT_NOT_FOUND;
+import static kr.hhplus.be.server.api.concert.domain.enums.error.ReservationErrorCode.RESERVATION_DATE_NOT_FOUND;
+import static kr.hhplus.be.server.api.concert.domain.enums.error.ReservationErrorCode.RESERVATION_SEAT_NOT_FOUND;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;

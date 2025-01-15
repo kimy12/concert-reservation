@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.api.point.domain.dto;
+package kr.hhplus.be.server.api.point.domain.entity;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
@@ -16,7 +16,7 @@ import com.querydsl.core.types.dsl.PathInits;
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QUserPoint extends EntityPathBase<UserPoint> {
 
-    private static final long serialVersionUID = -1564190133L;
+    private static final long serialVersionUID = -594369339L;
 
     public static final QUserPoint userPoint = new QUserPoint("userPoint");
 
