@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.api.common.response;
 
-import kr.hhplus.be.server.api.common.exception.enums.ErrorCode;
+import kr.hhplus.be.server.api.common.exception.ErrorCode;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +18,6 @@ public class ApiErrorResponse {
                 .status(e.getStatus())
                 .body(ApiErrorResponse.builder()
                         .status(e.getStatus().value())
-                        .name(e.name())
                         .code(e.getCode())
                         .message(e.getMessage())
                         .build());
