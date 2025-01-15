@@ -38,7 +38,6 @@ public class UserPointService {
         } else if(pointHistoryType.equals(DEDUCT)) {
             userPoint.deductPoint(amount);
         }
-
         PointHistory pointHistory = PointHistory.builder()
                 .userPoint(userPoint)
                 .amount(amount)
@@ -49,23 +48,4 @@ public class UserPointService {
 
         return userPoint;
     }
-
-//    @Transactional
-//    public UserPoint deductPoint (long userId, long amount) {
-//        UserPoint userPoint = userPointRepository.findByUserId(userId)
-//                                                    .orElseThrow(()->new CustomException(POINT_NOT_FOUND));
-//
-//        userPoint.deductPoint(amount);
-//
-//        PointHistory pointHistory = PointHistory.builder()
-//                .userPoint(userPoint)
-//                .amount(amount)
-//                .type(DEDUCT)
-//                .build();
-//
-//        userPoint.addPointHistory(pointHistory);
-//
-//        return userPoint;
-//    }
-
 }

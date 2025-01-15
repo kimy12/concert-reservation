@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.api.concert.domain.model;
 
+import kr.hhplus.be.server.api.common.exception.CustomException;
 import kr.hhplus.be.server.api.concert.domain.enums.ReservationStatus;
 import kr.hhplus.be.server.api.concert.infrastructure.entity.Reservation;
 import lombok.Builder;
@@ -8,6 +9,7 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+import static kr.hhplus.be.server.api.common.exception.enums.ErrorCode.SEAT_NOT_AVAILABLE;
 import static kr.hhplus.be.server.api.concert.domain.enums.ReservationStatus.RESERVING;
 
 @Getter
@@ -67,5 +69,12 @@ public class ReservationModel {
                 .updatedAt(this.updatedAt)
                 .price(this.price)
                 .build();
+    }
+
+    public void checkCreatedAt (LocalDateTime now) {
+        LocalDateTime expiredAt = this.createdAt.plusMinutes(5);
+        if(expiredAt.isBefore(now)){
+            throw new CustomException(SEAT_NOT_AVAILABLE);
+        }
     }
 }

@@ -1,6 +1,5 @@
 package kr.hhplus.be.server.api.concert.application;
 
-import kr.hhplus.be.server.api.common.exception.CustomException;
 import kr.hhplus.be.server.api.concert.domain.model.ConcertInfoModel;
 import kr.hhplus.be.server.api.concert.domain.model.ConcertScheduleModel;
 import kr.hhplus.be.server.api.concert.domain.model.ConcertSeatModel;
@@ -9,16 +8,15 @@ import kr.hhplus.be.server.api.concert.domain.service.ConcertService;
 import kr.hhplus.be.server.api.concert.domain.service.ReservationService;
 import kr.hhplus.be.server.api.concert.presentation.dto.ConcertRequest;
 import kr.hhplus.be.server.api.concert.presentation.dto.ConcertResponse;
-import kr.hhplus.be.server.api.point.domain.dto.UserPoint;
 import kr.hhplus.be.server.api.point.domain.service.UserPointService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static kr.hhplus.be.server.api.common.exception.enums.ErrorCode.SEAT_NOT_AVAILABLE;
 import static kr.hhplus.be.server.api.point.domain.enums.PointHistoryType.DEDUCT;
 
 @Component
@@ -64,12 +62,9 @@ public class ConcertFacade {
 
     @Transactional
     public ConcertResponse.ReservedSeatInfo payReservedSeat(ConcertRequest.ReserveConcert request) {
-
-        ReservationModel reservedSeat = reservationService.findByReservedIdByCreatedAt(request.reservedId())
-                .orElseThrow(() -> new CustomException(SEAT_NOT_AVAILABLE));
-
-        UserPoint userPoint = userPointService.chargeOrDeductPoint(request.userId(), reservedSeat.getPrice(), DEDUCT);
-
+        LocalDateTime now = LocalDateTime.now();
+        ReservationModel reservedSeat = reservationService.findByReservedIdByCreatedAt(request.reservedId(), now);
+        userPointService.chargeOrDeductPoint(request.userId(), reservedSeat.getPrice(), DEDUCT);
         ReservationModel reservedInfo = reservationService.reservedSeatComplete(reservedSeat);
 
         return ConcertResponse.ReservedSeatInfo.builder()

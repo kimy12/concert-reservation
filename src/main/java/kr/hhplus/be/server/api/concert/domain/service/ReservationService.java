@@ -29,24 +29,12 @@ public class ReservationService {
                         concertSeatModel.getPrice());
         return reservationRepository.save(seatInfoForReservation.toEntity());
     }
-
-    public Optional<ReservationModel> updateReservation(ReservationModel reservedSeat) {
-        return reservationRepository.updateReservation(reservedSeat);
-    }
-
-    public Optional<ReservationModel> findByReservedIdByCreatedAt(long reservedId) {
-
-        LocalDateTime createdAt = reservationRepository.findById(reservedId)
-                .map(ReservationModel::getCreatedAt)
-                .orElseThrow(() -> new CustomException(SEAT_NOT_AVAILABLE));
-
-        LocalDateTime expiredDate = createdAt.plusMinutes(10);
-        LocalDateTime now = LocalDateTime.now();
-
-        if(expiredDate.isBefore(now)) {
-            throw new CustomException(SEAT_NOT_AVAILABLE);
-        }
-        return reservationRepository.findById(reservedId);
+    
+    public ReservationModel findByReservedIdByCreatedAt(long reservedId, LocalDateTime now) {
+        ReservationModel reservedSeat = reservationRepository.findById(reservedId)
+                .orElseThrow(()-> new CustomException(SEAT_NOT_AVAILABLE));
+        reservedSeat.checkCreatedAt(now);
+        return reservedSeat;
     }
 
     public ReservationModel reservedSeatComplete(ReservationModel reservedSeat) {
