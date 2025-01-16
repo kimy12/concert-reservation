@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.api.point.application;
 
 import kr.hhplus.be.server.api.concert.domain.service.ReservationService;
-import kr.hhplus.be.server.api.user.domain.dto.User;
+import kr.hhplus.be.server.api.user.domain.entity.User;
 import kr.hhplus.be.server.api.point.domain.entity.UserPoint;
 import kr.hhplus.be.server.api.point.domain.service.UserPointService;
 import kr.hhplus.be.server.api.user.domain.service.UserService;
