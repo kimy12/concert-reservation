@@ -52,6 +52,7 @@ public class ConcertFacade {
     @Transactional
     public ConcertResponse.ReservedSeatInfo reservedSeat(ConcertRequest.ReserveConcert request) {
         ConcertSeatModel seatInfo = concertService.findSeatInfo(request.seatId(), request.scheduleId());
+        concertService.updateSeatStatus(request.seatId(), request.scheduleId());
         ReservationModel reservedSeat = reservationService.reserveSeat(request.userId(), seatInfo);
         return ConcertResponse.ReservedSeatInfo.builder()
                 .createAt(reservedSeat.getCreatedAt())
@@ -61,16 +62,16 @@ public class ConcertFacade {
     }
 
     @Transactional
-    public ConcertResponse.ReservedSeatInfo payReservedSeat(ConcertRequest.ReserveConcert request) {
+    public ConcertResponse.ReservedSeatInfo payReservedSeat(ConcertRequest.PayReserveConcert request) {
         LocalDateTime now = LocalDateTime.now();
         ReservationModel reservedSeat = reservationService.findByReservedIdByCreatedAt(request.reservedId(), now);
         userPointService.chargeOrDeductPoint(request.userId(), reservedSeat.getPrice(), DEDUCT);
-        ReservationModel reservedInfo = reservationService.reservedSeatComplete(reservedSeat);
+        reservationService.reservedSeatComplete(reservedSeat);
 
         return ConcertResponse.ReservedSeatInfo.builder()
-                .createAt(reservedInfo.getCreatedAt())
-                .price(reservedInfo.getPrice())
-                .seatNumber(reservedInfo.getSeatNumber())
+                .createAt(reservedSeat.getCreatedAt())
+                .price(reservedSeat.getPrice())
+                .seatNumber(reservedSeat.getSeatNumber())
                 .build();
     }
 }

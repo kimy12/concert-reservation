@@ -47,10 +47,14 @@ public class ConcertService {
     }
 
     public ConcertSeatModel findSeatInfo(Long seatId, Long scheduleId){
-        return concertRepository.findBySeatNumberAndScheduleId(seatId, scheduleId)
+        return concertRepository.findBySeatNumberAndScheduleIdAndStatus(seatId, scheduleId)
                 .orElseThrow(
                         ()-> new CustomException(SEAT_NOT_AVAILABLE)
                 );
+    }
+
+    public void updateSeatStatus (Long seatId, Long scheduleId){
+        concertRepository.updateSeatStatusPending(seatId, scheduleId);
     }
 
     /**

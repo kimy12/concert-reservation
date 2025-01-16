@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.api.concert.infrastructure.repository.impl;
 
+import kr.hhplus.be.server.api.concert.domain.enums.ConcertSeatStatus;
 import kr.hhplus.be.server.api.concert.domain.model.ConcertInfoModel;
 import kr.hhplus.be.server.api.concert.domain.model.ConcertScheduleModel;
 import kr.hhplus.be.server.api.concert.domain.model.ConcertSeatModel;
@@ -17,6 +18,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static kr.hhplus.be.server.api.concert.domain.enums.ConcertSeatStatus.PENDING;
+import static kr.hhplus.be.server.api.concert.domain.enums.ConcertSeatStatus.VOIDED;
 
 @Repository
 @RequiredArgsConstructor
@@ -50,8 +54,8 @@ public class ConcertRepositoryImpl implements ConcertRepository {
     }
 
     @Override
-    public Optional<ConcertSeatModel> findBySeatNumberAndScheduleId(Long seatNumber, Long scheduleId) {
-        return concertSeatJpaRepository.findBySeatNumberAndScheduleId(seatNumber, scheduleId)
+    public Optional<ConcertSeatModel> findBySeatNumberAndScheduleIdAndStatus(Long seatNumber, Long scheduleId) {
+        return concertSeatJpaRepository.findBySeatNumberAndScheduleIdAndStatus(seatNumber, scheduleId, VOIDED)
                 .map(ConcertSeat :: toModel);
     }
 
@@ -67,5 +71,10 @@ public class ConcertRepositoryImpl implements ConcertRepository {
     public Optional<ConcertSeatModel> findSeatInfoBySeatId(Long seatId) {
         return concertSeatJpaRepository.findById(seatId)
                 .map(ConcertSeat :: toModel);
+    }
+
+    @Override
+    public int updateSeatStatusPending(Long seatNumber, Long scheduleId) {
+        return concertSeatJpaRepository.updateSeatStatus(seatNumber, scheduleId, PENDING);
     }
 }
