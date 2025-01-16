@@ -33,7 +33,7 @@ class TokenRepositoryTest {
         Token build = Token.builder()
                 .tokenStatus(PENDING)
                 .userId(3)
-                .createdAt(date)
+                .expireAt(date)
                 .build();
 
 
@@ -59,7 +59,7 @@ class TokenRepositoryTest {
         Token build = Token.builder()
                 .tokenStatus(PENDING)
                 .userId(3)
-                .createdAt(date)
+                .expireAt(date)
                 .build();
 
         // when
@@ -69,7 +69,7 @@ class TokenRepositoryTest {
         assertThat(saved).isNotNull();
         assertThat(saved.getTokenStatus()).isEqualTo(PENDING);
         assertThat(saved.getUserId()).isEqualTo(3);
-        assertThat(saved.getCreatedAt()).isEqualTo(date);
+        assertThat(saved.getExpireAt()).isEqualTo(date);
     }
 
 
