@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
+import static kr.hhplus.be.server.api.token.domain.enums.TokenStatus.PENDING;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/token")
@@ -27,7 +29,7 @@ public class TokenController implements SwaggerApi{
         UUID tokenUUID = tokenService.saveTokenInfo(request.userId());
         HttpHeaders headers = new HttpHeaders();
         headers.add("USER-TOKEN", tokenUUID.toString());
-        TokenResponse.Response response = new TokenResponse.Response(tokenUUID.toString(), "Pending");
+        TokenResponse.Response response = new TokenResponse.Response(tokenUUID.toString(), PENDING);
         return ResponseEntity.status(HttpStatus.CREATED).headers(headers).body(response);
     }
 }

@@ -7,13 +7,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.hhplus.be.server.api.common.exception.CustomException;
-import kr.hhplus.be.server.api.common.response.RestResponse;
-import kr.hhplus.be.server.api.common.response.TokenIssueResponse;
-import kr.hhplus.be.server.api.point.presentation.dto.PointRequest;
 import kr.hhplus.be.server.api.point.presentation.dto.PointResponse;
 import kr.hhplus.be.server.api.token.presentation.dto.TokenRequest;
 import kr.hhplus.be.server.api.token.presentation.dto.TokenResponse;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.http.ResponseEntity;
 
 @Tag(name = "[토큰 API]")
 public interface SwaggerApi {
@@ -52,5 +49,5 @@ public interface SwaggerApi {
                                     )
                             ))
             })
-    public TokenIssueResponse<TokenResponse.Response> getToken(TokenRequest.Request request);
+    public ResponseEntity<TokenResponse.Response> getToken(TokenRequest.Request request);
 }
