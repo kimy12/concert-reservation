@@ -1,7 +1,6 @@
 package kr.hhplus.be.server.api.token.domain.service;
 
 import kr.hhplus.be.server.api.common.exception.CustomException;
-import kr.hhplus.be.server.api.common.exception.enums.ErrorCode;
 import kr.hhplus.be.server.api.token.domain.model.TokenModel;
 import kr.hhplus.be.server.api.token.domain.enums.TokenStatus;
 import kr.hhplus.be.server.api.token.domain.repository.TokenRepository;
@@ -19,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static kr.hhplus.be.server.api.token.domain.enums.TokenErrorCode.TOKEN_INVALID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -98,7 +98,7 @@ class TokenServiceTest {
         // when & then
         assertThatThrownBy(() -> tokenService.getTokenInfoByUUID(invalidUUID))
                 .isInstanceOf(CustomException.class)
-                .hasMessageContaining(ErrorCode.TOKEN_INVALID.getMessage());
+                .hasMessageContaining(TOKEN_INVALID.getMessage());
         verify(tokenUUIDManager, times(1)).getTokenIdByTokenUuid(invalidUUID);
         verify(tokenRepository, times(1)).findByTokenId(invalidTokenId);
     }
@@ -150,6 +150,6 @@ class TokenServiceTest {
         //when // then
         assertThatThrownBy(() -> tokenService.changeTokenStatusActive(tokenId))
                 .isInstanceOf(CustomException.class)
-                .hasMessageContaining(ErrorCode.TOKEN_INVALID.getMessage());
+                .hasMessageContaining(TOKEN_INVALID.getMessage());
     }
 }
