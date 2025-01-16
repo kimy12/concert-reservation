@@ -1,10 +1,11 @@
-package kr.hhplus.be.server.api.concert.domain.service;
+package kr.hhplus.be.server.api.concert.domain.service.unit;
 
 import kr.hhplus.be.server.api.common.exception.CustomException;
 import kr.hhplus.be.server.api.concert.domain.model.ConcertInfoModel;
 import kr.hhplus.be.server.api.concert.domain.model.ConcertScheduleModel;
 import kr.hhplus.be.server.api.concert.domain.model.ConcertSeatModel;
 import kr.hhplus.be.server.api.concert.domain.repository.ConcertRepository;
+import kr.hhplus.be.server.api.concert.domain.service.ConcertService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

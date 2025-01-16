@@ -60,7 +60,7 @@ public class ConcertController implements SwaggerApi{
      */
     @Override
     @PatchMapping("/api/v1/paySeat")
-    public RestResponse<ConcertResponse.ReservedSeatInfo> payConcertSeat (@RequestBody ConcertRequest.ReserveConcert request){
+    public RestResponse<ConcertResponse.ReservedSeatInfo> payConcertSeat (@RequestBody ConcertRequest.PayReserveConcert request){
         return RestResponse.ok(concertFacade.payReservedSeat(request));
     }
 }

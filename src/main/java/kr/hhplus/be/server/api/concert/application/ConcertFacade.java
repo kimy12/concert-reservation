@@ -64,7 +64,7 @@ public class ConcertFacade {
     @Transactional
     public ConcertResponse.ReservedSeatInfo payReservedSeat(ConcertRequest.PayReserveConcert request) {
         LocalDateTime now = LocalDateTime.now();
-        ReservationModel reservedSeat = reservationService.findByReservedIdByCreatedAt(request.reservedId(), now);
+        ReservationModel reservedSeat = reservationService.findByReservedId(request.reservedId(), now);
         userPointService.chargeOrDeductPoint(request.userId(), reservedSeat.getPrice(), DEDUCT);
         reservationService.reservedSeatComplete(reservedSeat);
 

@@ -29,16 +29,15 @@ public class ReservationService {
         return reservationRepository.save(seatInfoForReservation.toEntity());
     }
     
-    public ReservationModel findByReservedIdByCreatedAt(long reservedId, LocalDateTime now) {
+    public ReservationModel findByReservedId (long reservedId, LocalDateTime now) {
         ReservationModel reservedSeat = reservationRepository.findById(reservedId)
                 .orElseThrow(()-> new CustomException(SEAT_NOT_AVAILABLE));
         reservedSeat.checkCreatedAt(now);
         return reservedSeat;
     }
 
-    public ReservationModel reservedSeatComplete(ReservationModel reservedSeat) {
+    public void reservedSeatComplete(ReservationModel reservedSeat) {
         reservedSeat.setStatus(RESERVED);
-        return reservationRepository.updateReservation(reservedSeat)
-                .orElseThrow(() -> new CustomException(SEAT_NOT_AVAILABLE));
+        reservationRepository.updateReservation(reservedSeat);
     }
 }

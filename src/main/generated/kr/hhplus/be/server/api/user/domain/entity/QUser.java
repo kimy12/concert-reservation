@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.api.user.domain.dto;
+package kr.hhplus.be.server.api.user.domain.entity;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 import static kr.hhplus.be.server.api.concert.domain.enums.ConcertSeatStatus.PENDING;
+import static kr.hhplus.be.server.api.concert.domain.enums.ConcertSeatStatus.VOIDED;
 
 @Repository
 @RequiredArgsConstructor
@@ -63,7 +64,7 @@ public class ConcertInfoQueryRepository  {
         QConcertSeat qConcertSeat = QConcertSeat.concertSeat;
 
         BooleanExpression condition = qConcertSeat.scheduleId.eq(scheduleId)
-                .and((qConcertSeat.status.isNull()).or(qConcertSeat.status.eq(PENDING)));
+                .and((qConcertSeat.status.isNull()).or(qConcertSeat.status.eq(VOIDED)));
 
         return queryFactory.select(Projections.fields(AvailableSeatsProjection.class,
                         qConcertSchedule.concertId.as("concertId"),

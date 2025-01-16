@@ -10,7 +10,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 import static kr.hhplus.be.server.api.concert.domain.enums.ReservationStatus.RESERVING;
-import static kr.hhplus.be.server.api.concert.domain.enums.error.SeatErrorCode.SEAT_NOT_AVAILABLE;
+import static kr.hhplus.be.server.api.concert.domain.enums.error.ReservationErrorCode.RESERVATION_TIME_EXCEEDED;
 
 @Getter
 @Setter
@@ -68,13 +68,14 @@ public class ReservationModel {
                 .createdAt(this.createdAt)
                 .updatedAt(this.updatedAt)
                 .price(this.price)
+                .seatNumber(this.seatNumber)
                 .build();
     }
 
     public void checkCreatedAt (LocalDateTime now) {
         LocalDateTime expiredAt = this.createdAt.plusMinutes(5);
         if(expiredAt.isBefore(now)){
-            throw new CustomException(SEAT_NOT_AVAILABLE);
+            throw new CustomException(RESERVATION_TIME_EXCEEDED);
         }
     }
 }
