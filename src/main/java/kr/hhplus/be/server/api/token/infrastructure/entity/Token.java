@@ -24,14 +24,14 @@ public class Token {
     @Enumerated(EnumType.STRING)
     private TokenStatus tokenStatus;
 
-    private LocalDateTime createdAt;
+    private LocalDateTime expireAt;
 
     @Builder
-    public Token(long id, long userId, TokenStatus tokenStatus, LocalDateTime createdAt) {
+    public Token(long id, long userId, TokenStatus tokenStatus, LocalDateTime expireAt) {
         this.id = id;
         this.userId = userId;
         this.tokenStatus = tokenStatus;
-        this.createdAt = createdAt;
+        this.expireAt = expireAt;
     }
 
     public TokenModel toDto() {
@@ -39,7 +39,7 @@ public class Token {
                 .id(this.id)
                 .userId(this.userId)
                 .tokenStatus(this.tokenStatus)
-                .createdAt(this.createdAt)
+                .expireAt(this.expireAt)
                 .build();
     }
 

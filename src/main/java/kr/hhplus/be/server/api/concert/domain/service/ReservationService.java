@@ -8,10 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
-import static kr.hhplus.be.server.api.common.exception.enums.ErrorCode.SEAT_NOT_AVAILABLE;
 import static kr.hhplus.be.server.api.concert.domain.enums.ReservationStatus.RESERVED;
+import static kr.hhplus.be.server.api.concert.domain.enums.error.SeatErrorCode.SEAT_NOT_AVAILABLE;
 
 
 @Service
@@ -29,29 +28,16 @@ public class ReservationService {
                         concertSeatModel.getPrice());
         return reservationRepository.save(seatInfoForReservation.toEntity());
     }
-
-    public Optional<ReservationModel> updateReservation(ReservationModel reservedSeat) {
-        return reservationRepository.updateReservation(reservedSeat);
+    
+    public ReservationModel findByReservedId (long reservedId, LocalDateTime now) {
+        ReservationModel reservedSeat = reservationRepository.findById(reservedId)
+                .orElseThrow(()-> new CustomException(SEAT_NOT_AVAILABLE));
+        reservedSeat.checkCreatedAt(now);
+        return reservedSeat;
     }
 
-    public Optional<ReservationModel> findByReservedIdByCreatedAt(long reservedId) {
-
-        LocalDateTime createdAt = reservationRepository.findById(reservedId)
-                .map(ReservationModel::getCreatedAt)
-                .orElseThrow(() -> new CustomException(SEAT_NOT_AVAILABLE));
-
-        LocalDateTime expiredDate = createdAt.plusMinutes(10);
-        LocalDateTime now = LocalDateTime.now();
-
-        if(expiredDate.isBefore(now)) {
-            throw new CustomException(SEAT_NOT_AVAILABLE);
-        }
-        return reservationRepository.findById(reservedId);
-    }
-
-    public ReservationModel reservedSeatComplete(ReservationModel reservedSeat) {
+    public void reservedSeatComplete(ReservationModel reservedSeat) {
         reservedSeat.setStatus(RESERVED);
-        return reservationRepository.updateReservation(reservedSeat)
-                .orElseThrow(() -> new CustomException(SEAT_NOT_AVAILABLE));
+        reservationRepository.updateReservation(reservedSeat);
     }
 }

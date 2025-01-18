@@ -27,9 +27,8 @@ public class ReservationRepositoryImpl implements ReservationRepository {
     }
 
     @Override
-    public Optional<ReservationModel> updateReservation(ReservationModel reservedSeat) {
-        return reservationJpaRepository.updateStatusById(reservedSeat.getId(), reservedSeat.getStatus(), reservedSeat.getUpdatedAt())
-                .map(Reservation :: toDto);
+    public int updateReservation(ReservationModel reservedSeat) {
+        return reservationJpaRepository.updateStatusById(reservedSeat.getId(), reservedSeat.getStatus(), reservedSeat.getUpdatedAt());
     }
 
     @Override

@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.api.point.domain.dto;
+package kr.hhplus.be.server.api.point.domain.entity;
 
 import jakarta.persistence.*;
 import kr.hhplus.be.server.api.point.domain.enums.PointHistoryType;

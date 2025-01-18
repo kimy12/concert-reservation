@@ -1,9 +1,10 @@
-package kr.hhplus.be.server.api.concert.domain.service;
+package kr.hhplus.be.server.api.concert.domain.service.unit;
 
 import kr.hhplus.be.server.api.concert.domain.enums.ReservationStatus;
 import kr.hhplus.be.server.api.concert.domain.model.ConcertSeatModel;
 import kr.hhplus.be.server.api.concert.domain.model.ReservationModel;
 import kr.hhplus.be.server.api.concert.domain.repository.ReservationRepository;
+import kr.hhplus.be.server.api.concert.domain.service.ReservationService;
 import kr.hhplus.be.server.api.concert.infrastructure.entity.Reservation;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

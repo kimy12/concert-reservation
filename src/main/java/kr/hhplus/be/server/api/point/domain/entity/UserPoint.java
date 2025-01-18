@@ -1,12 +1,13 @@
-package kr.hhplus.be.server.api.point.domain.dto;
+package kr.hhplus.be.server.api.point.domain.entity;
 
 import jakarta.persistence.*;
 import kr.hhplus.be.server.api.common.exception.CustomException;
-import kr.hhplus.be.server.api.common.exception.enums.ErrorCode;
 import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static kr.hhplus.be.server.api.point.domain.enums.PointErrorCode.POINT_INSUFFICIENT;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -50,7 +51,7 @@ public class UserPoint {
 
     public boolean checkPointBeforeDeducting (long amount) {
         if(this.totalPoint < amount) {
-            throw new CustomException(ErrorCode.POINT_INSUFFICIENT);
+            throw new CustomException(POINT_INSUFFICIENT);
         }
         return true;
     }

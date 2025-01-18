@@ -1,8 +1,7 @@
 package kr.hhplus.be.server.api.point.domain.service;
 
-import kr.hhplus.be.server.api.common.exception.CustomException;
-import kr.hhplus.be.server.api.point.domain.dto.PointHistory;
-import kr.hhplus.be.server.api.point.domain.dto.UserPoint;
+import kr.hhplus.be.server.api.point.domain.entity.PointHistory;
+import kr.hhplus.be.server.api.point.domain.entity.UserPoint;
 import kr.hhplus.be.server.api.point.domain.enums.PointHistoryType;
 import kr.hhplus.be.server.api.point.domain.repository.UserPointRepository;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +37,6 @@ public class UserPointService {
         } else if(pointHistoryType.equals(DEDUCT)) {
             userPoint.deductPoint(amount);
         }
-
         PointHistory pointHistory = PointHistory.builder()
                 .userPoint(userPoint)
                 .amount(amount)
@@ -49,23 +47,4 @@ public class UserPointService {
 
         return userPoint;
     }
-
-//    @Transactional
-//    public UserPoint deductPoint (long userId, long amount) {
-//        UserPoint userPoint = userPointRepository.findByUserId(userId)
-//                                                    .orElseThrow(()->new CustomException(POINT_NOT_FOUND));
-//
-//        userPoint.deductPoint(amount);
-//
-//        PointHistory pointHistory = PointHistory.builder()
-//                .userPoint(userPoint)
-//                .amount(amount)
-//                .type(DEDUCT)
-//                .build();
-//
-//        userPoint.addPointHistory(pointHistory);
-//
-//        return userPoint;
-//    }
-
 }

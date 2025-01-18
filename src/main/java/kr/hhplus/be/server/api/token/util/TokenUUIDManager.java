@@ -1,10 +1,11 @@
 package kr.hhplus.be.server.api.token.util;
 
 import kr.hhplus.be.server.api.common.exception.CustomException;
-import kr.hhplus.be.server.api.common.exception.enums.ErrorCode;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
+
+import static kr.hhplus.be.server.api.token.domain.enums.TokenErrorCode.TOKEN_INVALID;
 
 @Component
 public class TokenUUIDManager {
@@ -22,7 +23,7 @@ public class TokenUUIDManager {
         if ((msb & 0xFFFFL) == (CUSTOM_IDENTIFIER & 0xFFFFL)) {
             return msb & 0xFFFFFFFFFFFF0000L;
         } else {
-            throw  new CustomException(ErrorCode.TOKEN_INVALID);
+            throw  new CustomException(TOKEN_INVALID);
         }
     }
 

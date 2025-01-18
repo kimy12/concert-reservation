@@ -8,11 +8,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static kr.hhplus.be.server.api.common.exception.enums.ErrorCode.TOKEN_INVALID;
+import static kr.hhplus.be.server.api.token.domain.enums.TokenErrorCode.TOKEN_INVALID;
+import static kr.hhplus.be.server.api.token.domain.enums.TokenErrorCode.TOKEN_PENDING;
 import static kr.hhplus.be.server.api.token.domain.enums.TokenStatus.ACTIVE;
 import static kr.hhplus.be.server.api.token.domain.enums.TokenStatus.PENDING;
 
@@ -22,6 +24,8 @@ import static kr.hhplus.be.server.api.token.domain.enums.TokenStatus.PENDING;
 public class TokenService {
     private final TokenRepository tokenRepository;
     private final TokenUUIDManager tokenUUIDManager;
+
+    private static final int TOKEN_QUE = 50;
 
     @Transactional
     public UUID saveTokenInfo (long userId) {
@@ -46,6 +50,17 @@ public class TokenService {
                 .stream()
                 .limit(limit)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void checkTokenQueue (UUID tokenUUID, LocalDateTime now) {
+        long tokenId = tokenUUIDManager.getTokenIdByTokenUuid(tokenUUID);
+        TokenModel tokenModel = tokenRepository.findByTokenId(tokenId)
+                .orElseThrow(() -> new CustomException(TOKEN_INVALID));
+        if(!ACTIVE.equals(tokenModel.getTokenStatus())) {
+            throw new CustomException(TOKEN_PENDING);
+        }
+        tokenModel.updateTokenStatus(now);
     }
 
     public List<TokenModel> findAllByTokenStatusActive(){

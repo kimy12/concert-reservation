@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.api.point.domain.repository;
 
-import kr.hhplus.be.server.api.point.domain.dto.UserPoint;
+import kr.hhplus.be.server.api.point.domain.entity.UserPoint;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

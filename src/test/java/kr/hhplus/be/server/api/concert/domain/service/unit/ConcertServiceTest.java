@@ -1,10 +1,11 @@
-package kr.hhplus.be.server.api.concert.domain.service;
+package kr.hhplus.be.server.api.concert.domain.service.unit;
 
 import kr.hhplus.be.server.api.common.exception.CustomException;
 import kr.hhplus.be.server.api.concert.domain.model.ConcertInfoModel;
 import kr.hhplus.be.server.api.concert.domain.model.ConcertScheduleModel;
 import kr.hhplus.be.server.api.concert.domain.model.ConcertSeatModel;
 import kr.hhplus.be.server.api.concert.domain.repository.ConcertRepository;
+import kr.hhplus.be.server.api.concert.domain.service.ConcertService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,8 +17,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static kr.hhplus.be.server.api.common.exception.enums.ErrorCode.*;
 import static kr.hhplus.be.server.api.concert.domain.enums.ConcertSeatStatus.VOIDED;
+import static kr.hhplus.be.server.api.concert.domain.enums.error.ConcertErrorCode.CONCERT_NOT_FOUND;
+import static kr.hhplus.be.server.api.concert.domain.enums.error.ReservationErrorCode.RESERVATION_DATE_NOT_FOUND;
+import static kr.hhplus.be.server.api.concert.domain.enums.error.ReservationErrorCode.RESERVATION_SEAT_NOT_FOUND;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;

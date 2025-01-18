@@ -11,7 +11,7 @@ public interface ReservationRepository {
 
     Optional<ReservationModel>findReservedSeatByUserId(Long userId);
 
-    Optional<ReservationModel> updateReservation(ReservationModel reservedSeat);
+    int updateReservation(ReservationModel reservedSeat);
 
     Optional<ReservationModel> findById(Long reservedId);
 }

@@ -26,13 +26,6 @@ public class ConcertSchedule {
 
     LocalDateTime startAt;
 
-//    public void toDomain (Long id, Long concertId, Long seq, LocalDateTime startAt) {
-//        this.id = id;
-//        this.concertId = concertId;
-//        this.seq = seq;
-//        this.startAt = startAt;
-//    }
-
     @Builder
     public ConcertSchedule(Long id, Long concertId, Long seq, LocalDateTime startAt) {
         this.id = id;

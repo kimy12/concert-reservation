@@ -14,24 +14,11 @@ import java.util.Optional;
 
 public interface ReservationJpaRepository extends JpaRepository<Reservation, Long> {
 
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("select r " +
-            "from Reservation r " +
-            "where r.status != 'CANCELED' " +
-            "and r.seatId = :seatId")
-    Optional<Reservation> findBySeatId(@Param("seatId") Long seatId);
-
     Optional<Reservation> findByUserId(Long userId);
 
     @Modifying
     @Query("UPDATE Reservation r SET r.status = :status, r.updatedAt = :updatedAt WHERE r.id = :reservationId")
-    Optional<Reservation> updateStatusById(@Param("reservationId") Long reservationId,
+    int updateStatusById(@Param("reservationId") Long reservationId,
                           @Param("status") ReservationStatus status,
                           @Param("updatedAt") LocalDateTime updatedAt);
-
-    @Query("select r " +
-            "from Reservation r " +
-            "where r.id= :reservedId ")
-    Optional<Reservation> findByReservedIdByCreatedAt(Long reservedId);
-
 }

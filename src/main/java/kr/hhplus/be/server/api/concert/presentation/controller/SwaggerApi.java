@@ -212,5 +212,5 @@ public interface SwaggerApi {
                                     )
                             ))
             })
-    RestResponse<ConcertResponse.ReservedSeatInfo> payConcertSeat (ConcertRequest.ReserveConcert request);
+    RestResponse<ConcertResponse.ReservedSeatInfo> payConcertSeat (ConcertRequest.PayReserveConcert request);
 }
