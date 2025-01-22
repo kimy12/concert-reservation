@@ -61,6 +61,9 @@ dependencies {
 	annotationProcessor("jakarta.annotation:jakarta.annotation-api")
 	annotationProcessor("jakarta.persistence:jakarta.persistence-api")
 
+	// Redis
+	implementation("org.redisson:redisson-spring-boot-starter:3.23.2")
+
 	// DB
 	runtimeOnly("com.mysql:mysql-connector-j")
 
