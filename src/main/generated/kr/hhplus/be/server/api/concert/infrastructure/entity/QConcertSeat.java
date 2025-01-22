@@ -29,6 +29,8 @@ public class QConcertSeat extends EntityPathBase<ConcertSeat> {
 
     public final EnumPath<kr.hhplus.be.server.api.concert.domain.enums.ConcertSeatStatus> status = createEnum("status", kr.hhplus.be.server.api.concert.domain.enums.ConcertSeatStatus.class);
 
+    public final NumberPath<Long> version = createNumber("version", Long.class);
+
     public QConcertSeat(String variable) {
         super(ConcertSeat.class, forVariable(variable));
     }
