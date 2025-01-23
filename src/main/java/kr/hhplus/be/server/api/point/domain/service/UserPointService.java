@@ -25,9 +25,8 @@ public class UserPointService {
                                                             .build());
     }
 
-    @Transactional
     public UserPoint chargeOrDeductPoint (long userId, long amount, PointHistoryType pointHistoryType) {
-        UserPoint userPoint = userPointRepository.findByUserId(userId)
+        UserPoint userPoint = userPointRepository.findByUserIdWithLock(userId)
                                                     .orElseGet(() -> UserPoint.builder()
                                                             .userId(userId)
                                                             .build());
