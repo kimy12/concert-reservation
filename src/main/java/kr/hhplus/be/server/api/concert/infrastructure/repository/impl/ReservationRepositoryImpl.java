@@ -9,6 +9,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+import static kr.hhplus.be.server.api.concert.domain.enums.ReservationStatus.RESERVING;
+
 @Repository
 @RequiredArgsConstructor
 public class ReservationRepositoryImpl implements ReservationRepository {
@@ -32,8 +34,8 @@ public class ReservationRepositoryImpl implements ReservationRepository {
     }
 
     @Override
-    public Optional<ReservationModel> findById(Long reservedId) {
-        return reservationJpaRepository.findById(reservedId)
-                .map(Reservation :: toDto);
+    public Optional<ReservationModel> findByIdAndStatus(Long reservedId) {
+        return reservationJpaRepository.findByIdAndStatus(reservedId, RESERVING)
+                .map(Reservation::toDto);
     }
 }

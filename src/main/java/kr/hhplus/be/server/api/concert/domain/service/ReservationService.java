@@ -30,7 +30,7 @@ public class ReservationService {
     }
     
     public ReservationModel findByReservedId (long reservedId, LocalDateTime now) {
-        ReservationModel reservedSeat = reservationRepository.findById(reservedId)
+        ReservationModel reservedSeat = reservationRepository.findByIdAndStatus(reservedId)
                 .orElseThrow(()-> new CustomException(SEAT_NOT_AVAILABLE));
         reservedSeat.checkCreatedAt(now);
         return reservedSeat;

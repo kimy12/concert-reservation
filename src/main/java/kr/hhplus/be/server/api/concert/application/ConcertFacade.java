@@ -7,6 +7,7 @@ import kr.hhplus.be.server.api.concert.domain.model.ConcertSeatModel;
 import kr.hhplus.be.server.api.concert.domain.model.ReservationModel;
 import kr.hhplus.be.server.api.concert.domain.service.ConcertService;
 import kr.hhplus.be.server.api.concert.domain.service.ReservationService;
+import kr.hhplus.be.server.api.concert.infrastructure.aop.RedissonLock;
 import kr.hhplus.be.server.api.concert.presentation.dto.ConcertRequest;
 import kr.hhplus.be.server.api.concert.presentation.dto.ConcertResponse;
 import kr.hhplus.be.server.api.point.domain.service.UserPointService;
@@ -63,6 +64,7 @@ public class ConcertFacade {
         }
     }
 
+    @RedissonLock(key = "#request.reservedId()")
     @Transactional
     public ConcertResponse.ReservedSeatInfo payReservedSeat(ConcertRequest.PayReserveConcert request) {
         LocalDateTime now = LocalDateTime.now();
