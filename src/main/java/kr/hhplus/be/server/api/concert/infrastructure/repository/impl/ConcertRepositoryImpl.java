@@ -1,6 +1,5 @@
 package kr.hhplus.be.server.api.concert.infrastructure.repository.impl;
 
-import kr.hhplus.be.server.api.concert.domain.enums.ConcertSeatStatus;
 import kr.hhplus.be.server.api.concert.domain.model.ConcertInfoModel;
 import kr.hhplus.be.server.api.concert.domain.model.ConcertScheduleModel;
 import kr.hhplus.be.server.api.concert.domain.model.ConcertSeatModel;
@@ -74,7 +73,7 @@ public class ConcertRepositoryImpl implements ConcertRepository {
     }
 
     @Override
-    public int updateSeatStatusPending(Long seatNumber, Long scheduleId) {
-        return concertSeatJpaRepository.updateSeatStatus(seatNumber, scheduleId, PENDING);
+    public ConcertSeatModel saveSeat(ConcertSeatModel seat) {
+        return concertSeatJpaRepository.save(seat.toEntity()).toModel();
     }
 }

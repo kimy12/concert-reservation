@@ -3,7 +3,6 @@ package kr.hhplus.be.server.api.concert.infrastructure.entity;
 import jakarta.persistence.*;
 import kr.hhplus.be.server.api.concert.domain.enums.ConcertSeatStatus;
 import kr.hhplus.be.server.api.concert.domain.model.ConcertSeatModel;
-import kr.hhplus.be.server.api.concert.presentation.dto.ConcertResponse;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,13 +26,17 @@ public class ConcertSeat {
     @Enumerated(EnumType.STRING)
     ConcertSeatStatus status;
 
+    @Version
+    private long version;
+
     @Builder
-    public ConcertSeat(Long id, Long scheduleId, Long seatNumber, Long price, ConcertSeatStatus status) {
+    public ConcertSeat(Long id, Long scheduleId, Long seatNumber, Long price, ConcertSeatStatus status, long version) {
         this.id = id;
         this.scheduleId = scheduleId;
         this.seatNumber = seatNumber;
         this.price = price;
         this.status = status;
+        this.version = version;
     }
 
     public ConcertSeatModel toModel() {
@@ -44,6 +47,7 @@ public class ConcertSeat {
                 .seatNumber(this.seatNumber)
                 .price(this.price)
                 .status(this.status)
+                .version(this.version)
                 .build();
     }
 }

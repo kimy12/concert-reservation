@@ -22,5 +22,6 @@ public interface ConcertRepository {
 
     Optional<ConcertSeatModel> findSeatInfoBySeatId(Long seatId);
 
-    int updateSeatStatusPending (Long seatNumber, Long scheduleId);
+    ConcertSeatModel saveSeat(ConcertSeatModel seat);
+
 }

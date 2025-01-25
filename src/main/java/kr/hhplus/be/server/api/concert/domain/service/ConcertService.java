@@ -6,6 +6,7 @@ import kr.hhplus.be.server.api.concert.domain.model.ConcertScheduleModel;
 import kr.hhplus.be.server.api.concert.domain.model.ConcertSeatModel;
 import kr.hhplus.be.server.api.concert.domain.repository.ConcertRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,7 @@ import static kr.hhplus.be.server.api.concert.domain.enums.error.ReservationErro
 import static kr.hhplus.be.server.api.concert.domain.enums.error.SeatErrorCode.SEAT_NOT_AVAILABLE;
 import static kr.hhplus.be.server.api.concert.domain.enums.error.SeatErrorCode.SEAT_NOT_FOUND;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 @Transactional(readOnly = true)
@@ -53,8 +55,13 @@ public class ConcertService {
                 );
     }
 
-    public void updateSeatStatus (Long seatId, Long scheduleId){
-        concertRepository.updateSeatStatusPending(seatId, scheduleId);
+    public ConcertSeatModel changeSeatStatusToPending (Long seatId, Long scheduleId){
+        return concertRepository.findBySeatNumberAndScheduleIdAndStatus(seatId, scheduleId)
+                .map(seatModel -> {
+                    seatModel.turnToPending();
+                    return concertRepository.saveSeat(seatModel);
+                })
+                .orElseThrow(() -> new CustomException(SEAT_NOT_AVAILABLE));
     }
 
     /**

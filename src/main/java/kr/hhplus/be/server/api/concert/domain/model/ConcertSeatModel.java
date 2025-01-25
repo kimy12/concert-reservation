@@ -1,6 +1,8 @@
 package kr.hhplus.be.server.api.concert.domain.model;
 
+import jakarta.persistence.Version;
 import kr.hhplus.be.server.api.concert.domain.enums.ConcertSeatStatus;
+import kr.hhplus.be.server.api.concert.infrastructure.entity.ConcertSeat;
 import kr.hhplus.be.server.api.concert.presentation.dto.ConcertResponse;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,6 +20,8 @@ public class ConcertSeatModel {
 
     private long price;
 
+    private long version;
+
     private long seatNumber;
 
     ConcertSeatStatus status;
@@ -26,7 +30,7 @@ public class ConcertSeatModel {
     private LocalDateTime createdAt;
 
     @Builder
-    public ConcertSeatModel(long seatId, long scheduleId, long concertId, long price, long seatNumber, ConcertSeatStatus status, LocalDateTime createdAt) {
+    public ConcertSeatModel(long seatId,long version, long scheduleId, long concertId, long price, long seatNumber, ConcertSeatStatus status, LocalDateTime createdAt) {
         this.seatId = seatId;
         this.scheduleId = scheduleId;
         this.concertId = concertId;
@@ -34,6 +38,18 @@ public class ConcertSeatModel {
         this.seatNumber = seatNumber;
         this.status = status;
         this.createdAt = createdAt;
+        this.version = version;
+    }
+
+    public ConcertSeat toEntity() {
+        return ConcertSeat.builder()
+                .id(seatId)
+                .scheduleId(scheduleId)
+                .seatNumber(seatNumber)
+                .price(price)
+                .version(version)
+                .status(status)
+                .build();
     }
 
     public ConcertResponse.SeatInfo toResponseDto (){
@@ -46,6 +62,10 @@ public class ConcertSeatModel {
                 .build();
     }
 
+    public void turnToPending (){
+        this.status = ConcertSeatStatus.PENDING;
+    }
+
     public void turnToVoided (){
         this.status = ConcertSeatStatus.VOIDED;
     }
@@ -54,5 +74,4 @@ public class ConcertSeatModel {
         LocalDateTime expiredAt = this.createdAt.plusMinutes(5);
         return expiredAt.isBefore(now);
     }
-
 }
