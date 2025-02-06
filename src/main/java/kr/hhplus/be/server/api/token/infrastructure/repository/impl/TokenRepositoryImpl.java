@@ -1,53 +1,52 @@
 package kr.hhplus.be.server.api.token.infrastructure.repository.impl;
 
-import kr.hhplus.be.server.api.token.domain.enums.TokenStatus;
-import kr.hhplus.be.server.api.token.domain.model.TokenModel;
 import kr.hhplus.be.server.api.token.domain.repository.TokenRepository;
-import kr.hhplus.be.server.api.token.infrastructure.entity.Token;
-import kr.hhplus.be.server.api.token.infrastructure.repository.TokenJpaRepository;
+import kr.hhplus.be.server.api.token.infrastructure.repository.TokenRedisRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 @Repository
 @RequiredArgsConstructor
 public class TokenRepositoryImpl implements TokenRepository {
 
-    private final TokenJpaRepository tokenJpaRepository;
+    private final TokenRedisRepository tokenRedisRepository;
+
 
     @Override
-    public Optional<TokenModel> findByTokenId(long uuid) {
-        return tokenJpaRepository.findById(uuid)
-                .map(Token :: toDto);
+    public void saveWaitingToken(String userId, LocalDateTime time) {
+        tokenRedisRepository.saveWaitingToken(userId, time);
     }
 
     @Override
-    public TokenModel save(Token token) {
-        return tokenJpaRepository.save(token).toDto();
+    public boolean isWaitingToken(String token) {
+        return tokenRedisRepository.isWaitingTokenExists(token);
     }
 
     @Override
-    public List<TokenModel> findAllByTokenStatusOrderByIdAsc(TokenStatus tokenStatus) {
-        return tokenJpaRepository.findAllByTokenStatusOrderByIdAsc(tokenStatus)
-                .stream()
-                .map(Token :: toDto)
-                .collect(Collectors.toList());
+    public boolean isActiveToken(String activeTokenKetName, String token) {
+        return tokenRedisRepository.isActiveTokenExists(activeTokenKetName, token);
     }
 
     @Override
-    public List<TokenModel> findAllByTokenStatus(TokenStatus tokenStatus) {
-        return tokenJpaRepository.findAllByTokenStatus(tokenStatus)
-                .stream()
-                .map(Token :: toDto)
-                .collect(Collectors.toList());
+    public void deleteByWaitingTokenId(String token) {
+        tokenRedisRepository.removeWaitingToken(token);
     }
 
     @Override
-    public void deleteByTokenId(long token) {
-        tokenJpaRepository.deleteById(token);
+    public void saveActiveToken(String userId, LocalDateTime time) {
+        tokenRedisRepository.saveActiveToken(userId, time);
+    }
+
+    @Override
+    public Set<String> getWaitingTokens() {
+        return tokenRedisRepository.getAllWaitingKeysOrdered();
+    }
+
+    @Override
+    public String getActiveTokenKeyByValue(String value) {
+        return tokenRedisRepository.getActiveTokenKeyByValue(value);
     }
 }

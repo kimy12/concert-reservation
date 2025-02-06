@@ -7,17 +7,22 @@ import kr.hhplus.be.server.api.token.infrastructure.entity.Token;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface TokenRepository {
 
-    Optional<TokenModel> findByTokenId(long token);
+    void saveWaitingToken(String userId, LocalDateTime time);
 
-    TokenModel save(Token token);
+    boolean isWaitingToken(String token);
 
-    List<TokenModel> findAllByTokenStatusOrderByIdAsc (TokenStatus tokenStatus);
+    boolean isActiveToken(String activeTokenKetName, String token);
 
-    List<TokenModel> findAllByTokenStatus(TokenStatus tokenStatus);
+    void deleteByWaitingTokenId(String token);
 
-    void deleteByTokenId(long token);
+    void saveActiveToken(String userId, LocalDateTime time);
+
+    Set<String> getWaitingTokens();
+
+    String getActiveTokenKeyByValue(String value);
 
 }

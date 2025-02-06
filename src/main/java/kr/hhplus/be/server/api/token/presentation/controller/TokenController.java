@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static kr.hhplus.be.server.api.token.domain.enums.TokenStatus.PENDING;
@@ -26,7 +27,7 @@ public class TokenController implements SwaggerApi{
     @Override
     @PostMapping("/api/v1")
     public ResponseEntity<TokenResponse.Response> getToken(@RequestBody TokenRequest.Request request){
-        UUID tokenUUID = tokenService.saveTokenInfo(request.userId());
+        UUID tokenUUID = tokenService.saveTokenInfo(request.userId(), LocalDateTime.now());
         HttpHeaders headers = new HttpHeaders();
         headers.add("USER-TOKEN", tokenUUID.toString());
         TokenResponse.Response response = new TokenResponse.Response(tokenUUID.toString(), PENDING);
