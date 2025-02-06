@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import static kr.hhplus.be.server.api.token.domain.enums.TokenErrorCode.TOKEN_INVALID;
@@ -36,120 +37,94 @@ class TokenServiceTest {
     @Mock
     private TokenUUIDManager tokenUUIDManager;
 
-    @DisplayName("uuid를 생성한다.")
+    @DisplayName("토큰 정보를 저장한다.")
     @Test
-    void createUUID() {
+    void saveTokenInfo() {
         // given
-        TokenModel tokenModel = TokenModel.builder()
-                .id(1L)
-                .userId(123L)
-                .tokenStatus(TokenStatus.PENDING)
-                .build();
+        long userId = 12345L;
+        LocalDateTime createdAt = LocalDateTime.now();
+        UUID mockUuid = UUID.randomUUID();
 
-        Token tokenEntity = tokenModel.toEntity();
-
-        when(tokenRepository.save(any(Token.class))).thenReturn(tokenEntity.toDto());
-        when(tokenUUIDManager.createUuidWithLong(1L)).thenReturn(UUID.randomUUID());
+        when(tokenUUIDManager.createUuidWithLong(userId)).thenReturn(mockUuid);
 
         // when
-        UUID tokenUUID = tokenService.saveTokenInfo(123L);
+        UUID result = tokenService.saveTokenInfo(userId, createdAt);
 
         // then
-        assertThat(tokenUUID).isNotNull();
-        verify(tokenRepository, times(1)).save(any());
-        verify(tokenUUIDManager, times(1)).createUuidWithLong(1L);
+        assertThat(result).isEqualTo(mockUuid);
+        verify(tokenRepository).saveWaitingToken(mockUuid.toString(), createdAt);
     }
 
-    @DisplayName("토큰 UUID로 토큰 정보를 조회한다.")
-    @Test
-    void getTokenInfoByUUID() {
-        // given
-        UUID tokenUUID = UUID.randomUUID();
-        long tokenId = 1L;
-        TokenModel tokenModel = TokenModel.builder()
-                .id(tokenId)
-                .userId(123L)
-                .tokenStatus(TokenStatus.PENDING)
-                .build();
-
-        when(tokenUUIDManager.getTokenIdByTokenUuid(tokenUUID)).thenReturn(tokenId);
-        when(tokenRepository.findByTokenId(tokenId)).thenReturn(Optional.of(tokenModel));
-
-        // when
-        TokenModel foundToken = tokenService.getTokenInfoByUUID(tokenUUID);
-
-        // then
-        assertThat(foundToken).isNotNull();
-        assertThat(foundToken.getId()).isEqualTo(tokenId);
-        verify(tokenUUIDManager, times(1)).getTokenIdByTokenUuid(tokenUUID);
-        verify(tokenRepository, times(1)).findByTokenId(tokenId);
-    }
-
-    @DisplayName("유효하지 않은 UUID로 토큰 정보를 조회할 때 예외를 발생시킨다.")
-    @Test
-    void getTokenInfoByInvalidUUID() {
-        // given
-        UUID invalidUUID = UUID.randomUUID();
-        long invalidTokenId = 99L;
-
-        when(tokenUUIDManager.getTokenIdByTokenUuid(invalidUUID)).thenReturn(invalidTokenId);
-        when(tokenRepository.findByTokenId(invalidTokenId)).thenReturn(Optional.empty());
-
-        // when & then
-        assertThatThrownBy(() -> tokenService.getTokenInfoByUUID(invalidUUID))
-                .isInstanceOf(CustomException.class)
-                .hasMessageContaining(TOKEN_INVALID.getMessage());
-        verify(tokenUUIDManager, times(1)).getTokenIdByTokenUuid(invalidUUID);
-        verify(tokenRepository, times(1)).findByTokenId(invalidTokenId);
-    }
-
-    @DisplayName("pending 상태의 토큰을 필요한 개수 만큼 가져온다.")
+    @DisplayName("모든 대기 토큰을 조회한다.")
     @Test
     void findAllPendingTokens() {
         // given
-        TokenModel tokenModel1 = new TokenModel(1, 1, TokenStatus.PENDING, LocalDateTime.of(2025, 1, 2, 1, 1));
-        TokenModel tokenModel2 = new TokenModel(2, 2, TokenStatus.PENDING, LocalDateTime.of(2025, 1, 2, 1, 1));
-        List<TokenModel> result = List.of(tokenModel1, tokenModel2);
-        TokenModel tokenModel3 = new TokenModel(3, 3, TokenStatus.ACTIVE, LocalDateTime.of(2025, 1, 2, 1, 1));
-        TokenModel tokenModel4 = new TokenModel(4, 4, TokenStatus.ACTIVE, LocalDateTime.of(2025, 1, 2, 1, 1));
-        List<TokenModel> result2 = List.of(tokenModel3, tokenModel4);
-        when(tokenRepository.findAllByTokenStatus(TokenStatus.ACTIVE)).thenReturn(result2);
-        when(tokenRepository.findAllByTokenStatusOrderByIdAsc(TokenStatus.PENDING)).thenReturn(result);
+        Set<String> mockTokens = Set.of("token1", "token2");
+        when(tokenRepository.getWaitingTokens()).thenReturn(mockTokens);
 
         // when
-        List<TokenModel> allPendingTokens = tokenService.findAllPendingTokens(3);
+        Set<String> result = tokenService.findAllPendingTokens();
 
         // then
-        assertThat(allPendingTokens).hasSize(1);
-        assertThat(allPendingTokens.get(0)).isEqualTo(tokenModel1);
-
+        assertThat(result).containsExactlyInAnyOrder("token1", "token2");
     }
 
-    @DisplayName("토큰 상태코드를 activate로 변경한다.")
+    @DisplayName("유효한 토큰이 큐에 있는지 확인한다.")
+    @Test
+    void checkTokenQueue_validToken() {
+        // given
+        UUID tokenUuid = UUID.randomUUID();
+        String activeKey = "active-token-key";
+
+        when(tokenRepository.getActiveTokenKeyByValue(tokenUuid.toString())).thenReturn(activeKey);
+        when(tokenRepository.isActiveToken(activeKey, tokenUuid.toString())).thenReturn(true);
+
+        // when & then (예외 발생 없음)
+        tokenService.checkTokenQueue(tokenUuid);
+    }
+
+    @DisplayName("토큰이 유효하지 않으면 예외를 발생시킨다.")
+    @Test
+    void checkTokenQueue_invalidToken() {
+        // given
+        UUID tokenUuid = UUID.randomUUID();
+
+        when(tokenRepository.getActiveTokenKeyByValue(tokenUuid.toString())).thenReturn("");
+
+        // when & then
+        assertThatThrownBy(() -> tokenService.checkTokenQueue(tokenUuid))
+                .isInstanceOf(CustomException.class)
+                .hasMessageContaining(TOKEN_INVALID.name());
+    }
+
+    @DisplayName("대기 토큰을 활성 상태로 변경한다.")
     @Test
     void changeTokenStatusActive() {
         // given
-        long tokenId = 1L;
-        TokenModel tokenModel = new TokenModel(tokenId, 1, TokenStatus.PENDING, LocalDateTime.of(2025, 1, 2, 1, 1));
-        when(tokenRepository.findByTokenId(tokenId)).thenReturn(Optional.of(tokenModel));
+        String tokenId = "test-token-id";
+        LocalDateTime now = LocalDateTime.now();
+
+        when(tokenRepository.isWaitingToken(tokenId)).thenReturn(true);
 
         // when
-        tokenService.changeTokenStatusActive(tokenId);
+        tokenService.changeTokenStatusActive(tokenId, now);
 
         // then
-        assertThat(tokenModel.getTokenStatus()).isEqualTo(TokenStatus.ACTIVE);
+        verify(tokenRepository).deleteByWaitingTokenId(tokenId);
+        verify(tokenRepository).saveActiveToken(tokenId, now);
     }
 
-    @DisplayName("유효 하지 않은 토큰의 토큰상태를 수정하려고 하면 예외가 발생한다.")
+    @DisplayName("대기 토큰이 존재하지 않으면 예외를 발생시킨다.")
     @Test
-    void changeTokenStatusActiveWithoutTokenInfo() {
+    void changeTokenStatusActive_invalidToken() {
         // given
-        long tokenId = 1L;
-        when(tokenRepository.findByTokenId(tokenId)).thenReturn(Optional.empty());
+        String tokenId = "invalid-token-id";
 
-        //when // then
-        assertThatThrownBy(() -> tokenService.changeTokenStatusActive(tokenId))
+        when(tokenRepository.isWaitingToken(tokenId)).thenReturn(false);
+
+        // when & then
+        assertThatThrownBy(() -> tokenService.changeTokenStatusActive(tokenId, LocalDateTime.now()))
                 .isInstanceOf(CustomException.class)
-                .hasMessageContaining(TOKEN_INVALID.getMessage());
+                .hasMessageContaining(TOKEN_INVALID.name());
     }
 }
