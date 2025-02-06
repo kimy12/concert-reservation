@@ -25,10 +25,12 @@ spring:
       hibernate.timezone.default_storage: NORMALIZE_UTC
       hibernate.jdbc.time_zone: UTC
 
+custom:
   redis:
-    host: localhost
-    port: 6379
-    password: 1234
+    token:
+      waiting-key: "token:key:waiting:"
+      active-key: "token:key:active:"
+      ttl-seconds: 600
 
 springdoc:
   packages-to-scan: kr.hhplus.be.server
@@ -53,6 +55,14 @@ spring:
     url: jdbc:mysql://localhost:3306/hhplus?characterEncoding=UTF-8&serverTimezone=UTC
     username: application
     password: application
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+    logging:
+      level:
+        root: info
 
 #logging:
 #  level:

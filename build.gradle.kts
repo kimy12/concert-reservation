@@ -72,6 +72,7 @@ dependencies {
 	annotationProcessor("org.projectlombok:lombok:1.18.28")
 
 	// Test
+	testImplementation("org.testcontainers:redis")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.boot:spring-boot-testcontainers")
 	testImplementation("org.testcontainers:junit-jupiter")
