@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -25,57 +26,29 @@ public class TokenService {
     private final TokenRepository tokenRepository;
     private final TokenUUIDManager tokenUUIDManager;
 
-    private static final int TOKEN_QUE = 50;
-
-    @Transactional
-    public UUID saveTokenInfo (long userId) {
-        TokenModel token = TokenModel.builder()
-                .userId(userId)
-                .tokenStatus(PENDING)
-                .build();
-        TokenModel savedTokenModel = tokenRepository.save(token.toEntity());
-        return tokenUUIDManager.createUuidWithLong(savedTokenModel.getId());
+    public UUID saveTokenInfo (long userId, LocalDateTime createdAt) {
+        UUID tokenUuid = tokenUUIDManager.createUuidWithLong(userId);
+        tokenRepository.saveWaitingToken(tokenUuid.toString(),createdAt);
+        return tokenUuid;
     }
 
-    public TokenModel getTokenInfoByUUID(UUID tokenUUID) {
-        long tokenId = tokenUUIDManager.getTokenIdByTokenUuid(tokenUUID);
-        return tokenRepository.findByTokenId(tokenId)
-                .orElseThrow(()->new CustomException(TOKEN_INVALID));
+    public Set<String> findAllPendingTokens() {
+        return tokenRepository.getWaitingTokens();
     }
 
-    public List<TokenModel> findAllPendingTokens(int maxActive) {
-        int activeToken = tokenRepository.findAllByTokenStatus(ACTIVE).size();
-        int limit = maxActive <= activeToken ? 0 : maxActive-activeToken;
-        return tokenRepository.findAllByTokenStatusOrderByIdAsc(PENDING)
-                .stream()
-                .limit(limit)
-                .collect(Collectors.toList());
-    }
-
-    @Transactional
-    public void checkTokenQueue (UUID tokenUUID, LocalDateTime now) {
-        long tokenId = tokenUUIDManager.getTokenIdByTokenUuid(tokenUUID);
-        TokenModel tokenModel = tokenRepository.findByTokenId(tokenId)
-                .orElseThrow(() -> new CustomException(TOKEN_INVALID));
-        if(!ACTIVE.equals(tokenModel.getTokenStatus())) {
+    public void checkTokenQueue (UUID tokenUUID) {
+        String tokenKeyName = tokenRepository.getActiveTokenKeyByValue(tokenUUID.toString());
+        if(tokenKeyName.isEmpty()) throw new CustomException(TOKEN_INVALID);
+        if(!tokenRepository.isActiveToken(tokenKeyName, tokenUUID.toString())) {
             throw new CustomException(TOKEN_PENDING);
         }
-        tokenModel.updateTokenStatus(now);
     }
 
-    public List<TokenModel> findAllByTokenStatusActive(){
-        return tokenRepository.findAllByTokenStatus(ACTIVE);
-    }
-
-    @Transactional
-    public void changeTokenStatusActive (long tokenId) {
-        TokenModel tokenModel = tokenRepository.findByTokenId(tokenId)
-                .orElseThrow(() -> new CustomException(TOKEN_INVALID));
-        tokenModel.turnToActive();
-    }
-
-    @Transactional
-    public void deleteTokenInfo (long tokenId) {
-        tokenRepository.deleteByTokenId(tokenId);
+    public void changeTokenStatusActive (String tokenId, LocalDateTime now) {
+        if(!tokenRepository.isWaitingToken(tokenId)){
+            throw new CustomException(TOKEN_INVALID);
+        }
+        tokenRepository.deleteByWaitingTokenId(tokenId);
+        tokenRepository.saveActiveToken(tokenId, now);
     }
 }

@@ -1,18 +1,16 @@
 package kr.hhplus.be.server.api.token.domain.repository;
 
-import kr.hhplus.be.server.api.token.domain.model.TokenModel;
-import kr.hhplus.be.server.api.token.infrastructure.entity.Token;
-import kr.hhplus.be.server.api.token.infrastructure.repository.TokenJpaRepository;
+import kr.hhplus.be.server.api.token.infrastructure.repository.TokenRedisRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.Set;
 
-import static kr.hhplus.be.server.api.token.domain.enums.TokenStatus.PENDING;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -23,55 +21,90 @@ class TokenRepositoryTest {
     private TokenRepository tokenRepository;
 
     @Autowired
-    private TokenJpaRepository tokenJpaRepository;
+    private TokenRedisRepository tokenRedisRepository;
 
-    @DisplayName("토큰 id로 토큰을 찾는다.")
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
+
+    @DisplayName("waiting 토큰을 생성한다.")
     @Test
-    void findByTokenId() {
+    void saveWaitingToken() {
+
         // given
-        LocalDateTime date = LocalDateTime.of(2025, 1, 1, 0, 0);
-        Token build = Token.builder()
-                .tokenStatus(PENDING)
-                .userId(3)
-                .expireAt(date)
-                .build();
-
-
-        Token token = tokenJpaRepository.save(build);
+        String tokenValue = "test-waiting-token";
+        LocalDateTime currentTime = LocalDateTime.now();
+        tokenRedisRepository.saveWaitingToken(tokenValue, currentTime);
 
         // when
-        Optional<TokenModel> byTokenId =
-                tokenRepository.findByTokenId(token.getId());
+        boolean exists = tokenRedisRepository.isWaitingTokenExists(tokenValue);
 
         // then
-        assertThat(byTokenId).isPresent();
-        assertThat(byTokenId.get().getUserId()).isEqualTo(3);
-        assertThat(byTokenId.get().getTokenStatus()).isEqualTo(PENDING);
+        assertThat(exists).isTrue();
     }
 
-
-
-    @DisplayName("토큰을 저장한다.")
+    @DisplayName("active 토큰을 생성한다.")
     @Test
-    void saveTokenInfo() {
+    void saveActiveToken() {
+
         // given
-        LocalDateTime date = LocalDateTime.of(2025, 1, 1, 0, 0);
-        Token build = Token.builder()
-                .tokenStatus(PENDING)
-                .userId(3)
-                .expireAt(date)
-                .build();
+        String tokenValue = "00007048-860d-babe-9971-cec93ce70111";
+        LocalDateTime currentTime = LocalDateTime.now();
+        tokenRedisRepository.saveActiveToken(tokenValue, currentTime);
 
         // when
-        TokenModel saved = tokenRepository.save(build);
+        String activeKey = tokenRedisRepository.getActiveTokenKeyByValue(tokenValue);
 
         // then
-        assertThat(saved).isNotNull();
-        assertThat(saved.getTokenStatus()).isEqualTo(PENDING);
-        assertThat(saved.getUserId()).isEqualTo(3);
-        assertThat(saved.getExpireAt()).isEqualTo(date);
+        assertThat(activeKey).isNotNull();
+        assertThat(tokenRedisRepository.isActiveTokenExists(activeKey, tokenValue)).isTrue();
     }
 
+    @DisplayName("waiting 토큰을 삭제한다.")
+    @Test
+    void removeWaitingToken() {
 
+        // given
+        String tokenValue = "test-remove-token";
+        LocalDateTime currentTime = LocalDateTime.now();
+        tokenRedisRepository.saveWaitingToken(tokenValue, currentTime);
+
+        // when
+        tokenRedisRepository.removeWaitingToken(tokenValue);
+
+        // then
+        boolean exists = tokenRedisRepository.isWaitingTokenExists(tokenValue);
+        assertThat(exists).isFalse();
+    }
+
+    @DisplayName("waiting 토큰을 가져온다.")
+    @Test
+    void getAllWaitingKeysOrdered() {
+        // given
+        tokenRedisRepository.saveWaitingToken("token1", LocalDateTime.now().minusMinutes(5));
+        tokenRedisRepository.saveWaitingToken("token2", LocalDateTime.now().minusMinutes(2));
+
+        // when
+        Set<String> tokens = tokenRedisRepository.getAllWaitingKeysOrdered();
+
+        // then
+        assertThat(tokens).containsExactly("token1", "token2");
+    }
+
+    @DisplayName("Active 토큰의 존재를 확인한다.")
+    @Test
+    void checkActiveToken() {
+        // given
+        String tokenValue = "test-active-token";
+        LocalDateTime time = LocalDateTime.now();
+        tokenRedisRepository.saveActiveToken(tokenValue, time);
+
+        // when
+        tokenRedisRepository.saveActiveToken(tokenValue, time);
+        String activeKey = tokenRedisRepository.getActiveTokenKeyByValue(tokenValue);
+        assertThat(activeKey).isNotNull();
+
+        // then
+        assertThat(tokenRedisRepository.isActiveTokenExists(activeKey, tokenValue)).isTrue();
+    }
 
 }

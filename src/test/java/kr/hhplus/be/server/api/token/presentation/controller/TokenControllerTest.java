@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.mockito.Mockito.when;
@@ -45,7 +46,7 @@ class TokenControllerTest {
 
         UUID tokenUUID = UUID.fromString("fcdba094-a7b2-4bb3-b646-eb143cb83ee0");
 
-        when(tokenService.saveTokenInfo(request.userId())).thenReturn(tokenUUID);
+        when(tokenService.saveTokenInfo(request.userId(), LocalDateTime.now())).thenReturn(tokenUUID);
 
         // when // then
         mockMvc.perform(

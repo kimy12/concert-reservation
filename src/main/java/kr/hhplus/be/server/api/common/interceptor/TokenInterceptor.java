@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static kr.hhplus.be.server.api.token.domain.enums.TokenErrorCode.TOKEN_INVALID;
@@ -25,12 +24,11 @@ public class TokenInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        LocalDateTime now = LocalDateTime.now();
         final String tokenUUID = request.getHeader(USER_TOKEN);
         if (tokenUUID.isBlank()) {
             throw new CustomException(TOKEN_INVALID);
         } else {
-            tokenService.checkTokenQueue(UUID.fromString(tokenUUID), now);
+            tokenService.checkTokenQueue(UUID.fromString(tokenUUID));
         }
         return true;
     }
