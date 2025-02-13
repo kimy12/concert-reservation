@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.api.concert.application;
 
 import kr.hhplus.be.server.api.common.exception.CustomException;
+import kr.hhplus.be.server.api.concert.application.event.listener.ReservationEventListener;
 import kr.hhplus.be.server.api.concert.domain.model.ConcertInfoModel;
 import kr.hhplus.be.server.api.concert.domain.model.ConcertScheduleModel;
 import kr.hhplus.be.server.api.concert.domain.model.ConcertSeatModel;
@@ -12,6 +13,7 @@ import kr.hhplus.be.server.api.concert.presentation.dto.ConcertRequest;
 import kr.hhplus.be.server.api.concert.presentation.dto.ConcertResponse;
 import kr.hhplus.be.server.api.point.domain.service.UserPointService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +33,7 @@ public class ConcertFacade {
     private final ConcertService concertService;
     private final ReservationService reservationService;
     private final UserPointService userPointService;
+    private final ApplicationEventPublisher eventPublisher;
 
     public List<ConcertResponse.ConcertInfo> getConcertInfo(long concertId) {
         return concertService.findConcertInfoById(concertId)
@@ -71,6 +74,14 @@ public class ConcertFacade {
         ReservationModel reservedSeat = reservationService.findByReservedId(request.reservedId(), now);
         userPointService.chargeOrDeductPoint(request.userId(), reservedSeat.getPrice(), DEDUCT);
         reservationService.reservedSeatComplete(reservedSeat);
+
+        eventPublisher.publishEvent(new ReservationEventListener(
+                request.userId(),
+                reservedSeat.getScheduleId(),
+                reservedSeat.getSeatNumber(),
+                reservedSeat.getPrice()
+        ));
+
         return new ConcertResponse.ReservedSeatInfo(reservedSeat.getScheduleId(), reservedSeat.getSeatNumber(), reservedSeat.getPrice(), reservedSeat.getCreatedAt());
     }
 }
