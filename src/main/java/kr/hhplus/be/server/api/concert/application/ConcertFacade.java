@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.api.concert.application;
 
 import kr.hhplus.be.server.api.common.exception.CustomException;
-import kr.hhplus.be.server.api.concert.application.event.listener.ReservationEventListener;
+import kr.hhplus.be.server.api.concert.application.event.AfterReservationConfirmedEvent;
 import kr.hhplus.be.server.api.concert.domain.model.ConcertInfoModel;
 import kr.hhplus.be.server.api.concert.domain.model.ConcertScheduleModel;
 import kr.hhplus.be.server.api.concert.domain.model.ConcertSeatModel;
@@ -75,7 +75,7 @@ public class ConcertFacade {
         userPointService.chargeOrDeductPoint(request.userId(), reservedSeat.getPrice(), DEDUCT);
         reservationService.reservedSeatComplete(reservedSeat);
 
-        eventPublisher.publishEvent(new ReservationEventListener(
+        eventPublisher.publishEvent(new AfterReservationConfirmedEvent(
                 request.userId(),
                 reservedSeat.getScheduleId(),
                 reservedSeat.getSeatNumber(),
