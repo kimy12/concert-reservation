@@ -64,6 +64,9 @@ dependencies {
 	// Redis
 	implementation("org.redisson:redisson-spring-boot-starter:3.23.2")
 
+	// Kafka
+	implementation("org.springframework.kafka:spring-kafka")
+
 	// DB
 	runtimeOnly("com.mysql:mysql-connector-j")
 
@@ -72,12 +75,15 @@ dependencies {
 	annotationProcessor("org.projectlombok:lombok:1.18.28")
 
 	// Test
-	testImplementation("org.testcontainers:redis")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.boot:spring-boot-testcontainers")
 	testImplementation("org.testcontainers:junit-jupiter")
 	testImplementation("org.testcontainers:mysql")
+	testImplementation("org.testcontainers:kafka:1.19.0")
+	testImplementation("org.springframework.kafka:spring-kafka-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+	testCompileOnly ("org.projectlombok:lombok:1.18.28")
+	testAnnotationProcessor("org.projectlombok:lombok:1.18.28")
 	// spring doc
 //	asciidoctorExt("org.springframework.restdocs:spring-restdocs-asciidoctor")
 //	testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
