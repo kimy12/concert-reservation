@@ -1,7 +1,8 @@
 package kr.hhplus.be.server.api.concert.application;
 
 import kr.hhplus.be.server.api.common.exception.CustomException;
-import kr.hhplus.be.server.api.concert.application.event.listener.ReservationEventListener;
+import kr.hhplus.be.server.api.concert.application.event.AfterReservationConfirmedEvent;
+import kr.hhplus.be.server.api.concert.application.event.publisher.ReservationPublisher;
 import kr.hhplus.be.server.api.concert.domain.model.ConcertInfoModel;
 import kr.hhplus.be.server.api.concert.domain.model.ConcertScheduleModel;
 import kr.hhplus.be.server.api.concert.domain.model.ConcertSeatModel;
@@ -34,6 +35,7 @@ public class ConcertFacade {
     private final ReservationService reservationService;
     private final UserPointService userPointService;
     private final ApplicationEventPublisher eventPublisher;
+    private final ReservationPublisher reservationPublisher;
 
     public List<ConcertResponse.ConcertInfo> getConcertInfo(long concertId) {
         return concertService.findConcertInfoById(concertId)
@@ -61,6 +63,7 @@ public class ConcertFacade {
         try {
             ConcertSeatModel seatInfo = concertService.changeSeatStatusToPending(request.seatId(), request.scheduleId());
             ReservationModel reservedSeat = reservationService.reserveSeat(request.userId(), seatInfo);
+            reservationPublisher.publish(reservedSeat);
             return new ConcertResponse.ReservedSeatInfo(reservedSeat.getScheduleId(), reservedSeat.getSeatNumber(), reservedSeat.getPrice(), reservedSeat.getCreatedAt());
         } catch (ObjectOptimisticLockingFailureException e) {
             throw new CustomException(SEAT_NOT_AVAILABLE);
@@ -75,7 +78,7 @@ public class ConcertFacade {
         userPointService.chargeOrDeductPoint(request.userId(), reservedSeat.getPrice(), DEDUCT);
         reservationService.reservedSeatComplete(reservedSeat);
 
-        eventPublisher.publishEvent(new ReservationEventListener(
+        eventPublisher.publishEvent(new AfterReservationConfirmedEvent(
                 request.userId(),
                 reservedSeat.getScheduleId(),
                 reservedSeat.getSeatNumber(),

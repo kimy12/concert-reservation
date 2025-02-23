@@ -1,6 +1,6 @@
-package kr.hhplus.be.server.api.concert.application.event;
+package kr.hhplus.be.server.api.concert.application.event.listener;
 
-import kr.hhplus.be.server.api.concert.application.event.listener.ReservationEventListener;
+import kr.hhplus.be.server.api.concert.application.event.AfterReservationConfirmedEvent;
 import kr.hhplus.be.server.api.concert.infrastructure.ExternalDataTransferClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,12 +12,12 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class ReservationConfirmedEvent {
+public class AfterReservationEventListener {
     private final ExternalDataTransferClient externalDataTransferClient;
 
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    public void handleReservationConfirmed(ReservationEventListener event) {
+    public void handleReservationConfirmed(AfterReservationConfirmedEvent event) {
         log.info("Reservation Succeeded {} ", event);
         try{
             externalDataTransferClient.sendReservationData(event.scheduleId(), event.userId());
