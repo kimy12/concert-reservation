@@ -55,7 +55,7 @@ public class ConcertInfoQueryRepository  {
                 .from(qConcertInfo)
                 .join(qConcertSchedule).on(qConcertInfo.id.eq(qConcertSchedule.concertId))
                 .join(qConcertSeat).on(qConcertSchedule.id.eq(qConcertSeat.scheduleId))
-                .where(qConcertInfo.id.eq(concertId), qConcertSeat.status.isNull())
+                .where(qConcertInfo.id.eq(concertId), qConcertSeat.status.eq(VOIDED))
                 .fetch();
     }
 
