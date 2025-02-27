@@ -8,7 +8,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class dataBatchForSchedule {
     public static void main(String[] args) {
-        String url = "jdbc:mysql://localhost:3306/hhplus?characterEncoding=UTF-8&serverTimezone=UTC";
+//        String url = "jdbc:mysql://localhost:3306/hhplus?characterEncoding=UTF-8&serverTimezone=UTC";
+        String url = "jdbc:mysql://mysql:3306/hhplus?characterEncoding=UTF-8&serverTimezone=UTC";
         String user = "application";
         String password = "application";
 
